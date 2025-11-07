@@ -6,6 +6,7 @@ import { Resetpassword } from './pages/resetpassword/resetpassword';
 import { Userprofile } from './pages/userprofile/userprofile';
 import { Product } from './pages/product/product';
 import { Carshop } from './pages/carshop/carshop';
+import { CreateBusiness } from './pages/createbusiness/createbusiness';
 
 export const routes: Routes = [
     {
@@ -35,5 +36,9 @@ export const routes: Routes = [
     {
         path: 'cart',
         component: Carshop
+    },
+    {
+        path: 'create-business',
+        component: CreateBusiness
     }
 ];

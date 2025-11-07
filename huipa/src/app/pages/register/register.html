@@ -6,6 +6,43 @@
       </h1>
       <p class="text-lg text-[#8B5A2B] mb-8 text-center">Descubre el alma del huila</p>
 
+      <!-- Subir foto (opcional) con preview y botón eliminar -->
+      <div>
+        <div class="flex flex-col items-center gap-3 mb-5">
+          <div
+            class="w-32 h-32 rounded-full bg-[#F6F4F1] border border-dashed border-gray-300 flex items-center justify-center overflow-hidden">
+            <img *ngIf="previewUrl; else placeholder" [src]="previewUrl" alt="preview"
+              class="w-full h-full object-cover" />
+            <ng-template #placeholder>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-gray-300" viewBox="0 0 24 24" fill="none"
+                aria-hidden="true">
+                <!-- Camera body -->
+                <path
+                  d="M3.5 8.5a2 2 0 0 1 2-2h2.5l1.2-1.2a1 1 0 0 1 .7-.3h5.6a1 1 0 0 1 .7.3L17.5 6.5H20a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H5.5a2 2 0 0 1-2-2v-7z"
+                  stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+                <!-- Lens -->
+                <circle cx="11.8" cy="12.2" r="3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+                  stroke-linejoin="round" />
+                <!-- Plus sign (top-right) -->
+                <path d="M18.5 4.5v2.2M17.4 5.6h2.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+            </ng-template>
+          </div>
+
+          <div class="flex gap-2">
+            <label class="px-4 py-2 rounded-lg bg-white border border-gray-200 text-sm text-[#8B5A2B] cursor-pointer">
+              Seleccionar foto
+              <input type="file" accept="image/*" (change)="onFileSelected($event)" hidden>
+            </label>
+            <button type="button" (click)="clearImage()"
+              class="px-4 py-2 rounded-lg bg-gray-100 text-sm text-gray-600 border border-gray-200">Eliminar
+              foto</button>
+          </div>
+        </div>
+      </div>
+
+
       <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-5">
         <!-- Nombres -->
         <div>
@@ -35,11 +72,28 @@
             class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#D6A84E] focus:outline-none transition duration-300">
         </div>
 
+        <!-- Dirección -->
+        <div>
+          <label class="block text-sm font-medium text-[#8B5A2B] mb-1">Dirección</label>
+          <input type="text" formControlName="residence" placeholder="Dirección"
+            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#D6A84E] focus:outline-none transition duration-300">
+        </div>
+
         <!-- Teléfono -->
         <div>
           <label class="block text-sm font-medium text-[#8B5A2B] mb-1">Número de teléfono</label>
           <input type="text" formControlName="phone" placeholder="+573001234567"
             class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#D6A84E] focus:outline-none transition duration-300">
+        </div>
+
+        <!-- Correo electrónico -->
+        <div>
+          <label class="block text-sm font-medium text-[#8B5A2B] mb-1">Correo electrónico</label>
+          <input type="email" formControlName="email" placeholder="Ingresa tu correo"
+            [ngClass]="{ 'border-red-500 ring-1 ring-red-300': form.get('email')?.invalid && (form.get('email')?.touched || form.get('email')?.dirty) }"
+            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#D6A84E] focus:outline-none transition duration-300">
+          <p *ngIf="form.get('email')?.invalid && (form.get('email')?.touched || form.get('email')?.dirty)"
+            class="text-sm text-red-600 mt-1">Por favor ingresa un correo válido.</p>
         </div>
 
         <!-- Contraseña -->
@@ -48,6 +102,53 @@
           <input type="password" formControlName="password" placeholder="Crea una contraseña segura"
             class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#D6A84E] focus:outline-none transition duration-300">
         </div>
+
+        <hr />
+
+        <!-- Switch para mostrar datos adicionales: historia de vida y galería de taller -->
+        <div class="flex items-center justify-left mb-6">
+          <label class="flex items-center cursor-pointer select-none">
+            <span class="mr-3 text-sm font-medium text-[#8B5A2B]">¿Eres Artesano?</span>
+            <div class="relative">
+              <input id="workshop-switch" type="checkbox" class="sr-only" formControlName="showWorkshop">
+              <div class="block bg-gray-200 w-14 h-8 rounded-full"></div>
+              <div class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition-transform"
+                [class.translate-x-6]="form.get('showWorkshop')?.value" [ngStyle]="{ 'box-shadow': '0 1px 2px rgba(0,0,0,0.06)' }"></div>
+            </div>
+          </label>
+        </div>
+
+        <div *ngIf="form.get('showWorkshop')?.value" class="mb-6">
+          <!-- Historia de vida -->
+          <label class="block text-sm font-medium text-[#8B5A2B] mb-2">Historia de vida</label>
+          <textarea formControlName="bio" rows="4"
+            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#D6A84E] focus:outline-none transition duration-300 mb-4"
+            placeholder="Cuenta tu historia, tu oficio o lo que quieras compartir..."></textarea>
+
+          <!-- Galería de taller: múltiples fotos -->
+          <label class="block text-sm font-medium text-[#8B5A2B] mb-2">Foto o Galería del taller</label>
+          <div class="flex flex-col gap-3">
+            <div class="flex flex-wrap gap-3">
+              <div *ngFor="let p of workshopPhotos; let i = index"
+                class="w-20 h-20 rounded-md overflow-hidden relative bg-gray-100 border">
+                <img [src]="p.previewUrl" class="w-full h-full object-cover" alt="foto-taller-{{i}}">
+                <button type="button" (click)="removeWorkshopPhoto(i)"
+                  class="absolute -top-0 -right-0 bg-white text-red-600 rounded-full w-6 h-6 flex items-center justify-center shadow">×</button>
+              </div>
+            </div>
+
+            <div class="flex gap-2 items-center">
+              <label class="px-4 py-2 rounded-lg bg-white border border-gray-200 text-sm text-[#8B5A2B] cursor-pointer">
+                Seleccionar fotos
+                <input type="file" accept="image/*" (change)="onWorkshopFilesSelected($event)" hidden multiple>
+              </label>
+              <button type="button" *ngIf="workshopPhotos.length" (click)="clearWorkshopPhotos()"
+                class="px-4 py-2 rounded-lg bg-gray-100 text-sm text-gray-600 border border-gray-200">Eliminar
+                todas</button>
+            </div>
+          </div>
+        </div>
+
 
         <!-- Botón Registro -->
         <button type="submit" [disabled]="!form.valid" class="w-full bg-[#D6A84E] text-white font-semibold py-3 rounded-lg shadow-md transform

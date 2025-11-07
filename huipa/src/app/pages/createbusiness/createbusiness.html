@@ -1,0 +1,80 @@
+<div class="min-h-screen bg-[#F3F1ED] px-4 pb-6">
+	<!-- Header -->
+	<header class="flex items-center gap-3 pt-4 pb-2">
+		<button aria-label="volver" (click)="goBack()" class="p-2 rounded-md text-[#8B5A2B]">
+			<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+			</svg>
+		</button>
+		<h1 class="flex-1 text-center text-lg font-semibold text-[#8B5A2B]">Crear Nuevo Negocio</h1>
+		<div class="w-8"></div>
+	</header>
+
+			<div class="mt-3">
+				<div class="bg-[#E6DCCF] rounded-2xl p-5 text-center font-semibold text-[#7a5f49]">
+					Como Artesano, puedes registrar un único negocio para mostrar tu taller.
+				</div>
+			</div>
+
+	<form class="mt-4 space-y-4">
+		<!-- Nombre del negocio -->
+		<div>
+			<label class="block text-sm font-medium text-[#6b4a34] mb-2">Nombre del negocio</label>
+			<input type="text" placeholder="Tu Taller de Artesanías" class="w-full px-4 py-3 rounded-lg border border-[#E7DFD6] bg-white focus:outline-none" />
+		</div>
+
+		<!-- Descripción -->
+		<div>
+			<label class="block text-sm font-medium text-[#6b4a34] mb-2">Descripción del taller</label>
+			<textarea rows="5" placeholder="Describe tu taller, tus productos y tu historia." class="w-full px-4 py-3 rounded-lg border border-[#E7DFD6] bg-white resize-none focus:outline-none"></textarea>
+		</div>
+
+		<!-- Métodos de pago -->
+		<div>
+			<label class="block text-sm font-medium text-[#6b4a34] mb-2">Métodos de pago</label>
+			<input type="text" placeholder="Ej: Transferencia, efectivo, etc." class="w-full px-4 py-3 rounded-lg border border-[#E7DFD6] bg-white focus:outline-none" />
+		</div>
+
+		<!-- WhatsApp -->
+		<div>
+			<label class="block text-sm font-medium text-[#6b4a34] mb-2">WhatsApp</label>
+			<div class="flex items-center gap-2">
+				<span class="inline-flex items-center px-3 py-2 rounded-lg bg-white border border-[#E7DFD6]">
+					<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-[#8B5A2B]" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 15a4 4 0 01-4 4H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+					</svg>
+				</span>
+				<input type="text" placeholder="+57 300 123 4567" class="flex-1 px-4 py-3 rounded-lg border border-[#E7DFD6] bg-white focus:outline-none" />
+			</div>
+		</div>
+
+		<!-- Redes Sociales -->
+		<div>
+			<label class="block text-sm font-medium text-[#6b4a34] mb-2">Redes Sociales</label>
+			<div class="space-y-2">
+						<div class="flex items-center gap-3">
+							<span class="inline-flex items-center justify-center w-8 h-8 rounded-md bg-white border border-[#E7DFD6]">
+								<!-- Instagram outline icon (stroke) -->
+								<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-[#D96B8C]" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+									<rect x="3.5" y="3.5" width="17" height="17" rx="4" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6"></rect>
+									<path d="M16.5 8.5h.01" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6"></path>
+									<path d="M12 8.5a3.5 3.5 0 100 7 3.5 3.5 0 000-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6"></path>
+								</svg>
+							</span>
+							<input type="text" placeholder="https://instagram.com/tu_perfil" class="flex-1 px-4 py-3 rounded-lg border border-[#E7DFD6] bg-white focus:outline-none" />
+						</div>
+
+				<div class="flex items-center gap-3">
+					<span class="inline-flex items-center justify-center w-8 h-8 rounded-md bg-white border border-[#E7DFD6]">
+						<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-600" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12.07C22 6.48 17.52 2 11.93 2S2 6.48 2 12.07c0 4.99 3.66 9.13 8.44 9.95v-7.05H8.07v-2.9h2.37V9.41c0-2.34 1.4-3.64 3.55-3.64 1.03 0 2.11.18 2.11.18v2.33h-1.19c-1.17 0-1.53.73-1.53 1.48v1.78h2.6l-.42 2.9h-2.18V22c4.78-.82 8.44-4.96 8.44-9.93z"/></svg>
+					</span>
+					<input type="text" placeholder="https://facebook.com/tu_pagina" class="flex-1 px-4 py-3 rounded-lg border border-[#E7DFD6] bg-white focus:outline-none" />
+				</div>
+			</div>
+		</div>
+
+		<div class="pt-2">
+			<button type="button" class="w-full py-3 rounded-xl bg-[#D6A84E] text-white font-semibold shadow-sm">Guardar Negocio</button>
+		</div>
+	</form>
+</div>
