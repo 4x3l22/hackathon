@@ -1,0 +1,98 @@
+.carousel-dots {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.carousel-dots .dot {
+	display: inline-block;
+	width: 8px;
+	height: 8px;
+	border-radius: 9999px;
+	background: rgba(255,255,255,0.6);
+	box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+}
+
+.carousel-dots .dot.active {
+	width: 10px;
+	height: 10px;
+	background: #fff;
+}
+
+/* Hide horizontal scrollbar but keep scrolling */
+.overflow-x-auto::-webkit-scrollbar {
+	height: 6px;
+}
+.overflow-x-auto::-webkit-scrollbar-track {
+	background: transparent;
+}
+.overflow-x-auto::-webkit-scrollbar-thumb {
+	background: rgba(0,0,0,0.08);
+	border-radius: 9999px;
+}
+
+/* Slight card shadow tweak to match design */
+.story-card {
+	border: 1px solid rgba(222, 217, 210, 0.6);
+}
+
+/* Small responsive tweaks */
+@media (max-width: 640px) {
+	.story-card { width: 84%; }
+}
+
+/* New products styles */
+.product-card {
+	border: 1px solid rgba(222,217,210,0.6);
+}
+
+.product-card .badge {
+	background: #3C8D40;
+	color: #fff;
+	padding: 4px 8px;
+	border-radius: 9999px;
+	display: inline-block;
+}
+
+.product-card img { height: 10rem; object-fit: cover; }
+
+.cart-btn{
+	background: #3C8D40;
+	width: 34px;
+	height: 34px;
+	border-radius: 9999px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border: none;
+	box-shadow: 0 4px 10px rgba(60,141,64,0.14);
+}
+
+/* Make sure product cards are a bit narrower on small screens */
+@media (max-width: 480px){
+	.product-card { width: 80%; }
+}
+
+/* Search input right icon */
+.search-input { transition: box-shadow .15s ease, transform .12s ease; }
+.search-button { background: transparent; border-radius: 9999px; display: inline-flex; align-items: center; justify-content: center; }
+.search-button:active { transform: scale(0.96); }
+
+/* Hover effects for cards' buttons */
+.story-card button, .product-card .cart-btn {
+	transition: transform .12s ease, box-shadow .12s ease, background-color .12s ease;
+}
+.story-card button:hover {
+	transform: translateY(-3px);
+	box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+	background-color: #fff7ef;
+}
+.product-card .cart-btn:hover {
+	transform: translateY(-3px) scale(1.03);
+	box-shadow: 0 6px 14px rgba(60,141,64,0.18);
+	background: #2f7f38;
+}
+
+/* Focus state for search input */
+.search-input:focus { box-shadow: 0 6px 18px rgba(214,168,78,0.12); }
+
