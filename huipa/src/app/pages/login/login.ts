@@ -2,10 +2,11 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
+import { RouterLink } from "@angular/router";
 
 @Component({
   selector: 'app-login',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
