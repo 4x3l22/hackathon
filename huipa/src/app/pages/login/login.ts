@@ -6,7 +6,7 @@ import { RouterLink } from "@angular/router";
 
 @Component({
   selector: 'app-login',
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })

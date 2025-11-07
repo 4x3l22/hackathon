@@ -1,0 +1,341 @@
+<div class="min-h-screen bg-primary-light">
+  
+  <!-- Portada y Foto de Perfil -->
+  <div class="relative">
+    <!-- Imagen de portada -->
+    <div class="h-48 md:h-64 bg-gradient-to-r from-primary to-accent overflow-hidden">
+      <img 
+        [src]="user.coverImage" 
+        alt="Portada"
+        class="w-full h-full object-cover opacity-80"
+      />
+    </div>
+    
+    <!-- Foto de perfil superpuesta -->
+    <div class="absolute left-1/2 transform -translate-x-1/2 -bottom-16 md:-bottom-20">
+      <div class="relative">
+        <img 
+          [src]="user.profileImage" 
+          alt="{{user.name}}"
+          class="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-white shadow-2xl object-cover"
+        />
+        <!-- Badge de verificado (opcional) -->
+        <div class="absolute bottom-2 right-2 bg-accent rounded-full p-2 border-2 border-white">
+          <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Información del Usuario -->
+  <div class="pt-20 md:pt-24 px-4 pb-6">
+    <div class="max-w-4xl mx-auto">
+      
+      <!-- Nombre y Ubicación -->
+      <div class="text-center mb-6">
+        <h1 class="text-3xl md:text-4xl font-bold text-primary mb-2">
+          {{user.name}}
+        </h1>
+        <div class="flex items-center justify-center gap-2 text-gray-600 mb-4">
+          <svg class="w-5 h-5 text-accent" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
+          </svg>
+          <span class="text-base md:text-lg">{{user.location}}</span>
+        </div>
+
+        <!-- Estadísticas -->
+        <div class="flex justify-center gap-6 md:gap-8 mb-6">
+          <div class="text-center">
+            <p class="text-2xl font-bold text-primary">{{user.stats.products}}</p>
+            <p class="text-sm text-gray-600">Productos</p>
+          </div>
+          <div class="text-center">
+            <p class="text-2xl font-bold text-primary">{{user.stats.sales}}</p>
+            <p class="text-sm text-gray-600">Ventas</p>
+          </div>
+          <div class="text-center">
+            <p class="text-2xl font-bold text-primary">{{user.stats.rating}}</p>
+            <p class="text-sm text-gray-600">Rating</p>
+          </div>
+        </div>
+
+        <!-- Botón de WhatsApp -->
+        <button
+          (click)="openWhatsApp()"
+          class="inline-flex items-center gap-3 px-8 py-4 bg-green-500 hover:bg-green-600 text-white font-bold rounded-xl
+                 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-2xl"
+        >
+          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+          </svg>
+          Contactar por WhatsApp
+        </button>
+      </div>
+
+      <!-- Navegación de Secciones -->
+      <div class="bg-white rounded-2xl shadow-lg overflow-hidden mb-6">
+        <div class="flex border-b border-gray-200">
+          <button
+            (click)="setActiveSection('story')"
+            [class]="activeSection === 'story' 
+              ? 'flex-1 py-4 px-6 text-primary font-bold border-b-4 border-accent transition-all duration-300'
+              : 'flex-1 py-4 px-6 text-gray-600 hover:text-primary hover:bg-gray-50 transition-all duration-300'"
+          >
+            Mi Historia
+          </button>
+          <button
+            (click)="setActiveSection('products')"
+            [class]="activeSection === 'products' 
+              ? 'flex-1 py-4 px-6 text-primary font-bold border-b-4 border-accent transition-all duration-300'
+              : 'flex-1 py-4 px-6 text-gray-600 hover:text-primary hover:bg-gray-50 transition-all duration-300'"
+          >
+            Productos
+          </button>
+          <button
+            (click)="setActiveSection('info')"
+            [class]="activeSection === 'info' 
+              ? 'flex-1 py-4 px-6 text-primary font-bold border-b-4 border-accent transition-all duration-300'
+              : 'flex-1 py-4 px-6 text-gray-600 hover:text-primary hover:bg-gray-50 transition-all duration-300'"
+          >
+            Información
+          </button>
+        </div>
+
+        <!-- Contenido de las Secciones -->
+        <div class="p-6 md:p-8">
+          
+          <!-- Sección: Mi Historia -->
+          <div *ngIf="activeSection === 'story'" class="space-y-6 animate-fadeIn">
+            <h2 class="text-2xl font-bold text-primary mb-4">Sobre mí</h2>
+            <div class="prose max-w-none">
+              <p class="text-gray-700 leading-relaxed mb-4">
+                {{user.bio}}
+              </p>
+              <p class="text-gray-700 leading-relaxed mb-4">
+                Llevo más de 5 años dedicándome al arte de la artesanía, combinando técnicas tradicionales 
+                con diseños modernos. Mi inspiración viene de la naturaleza y las culturas ancestrales de 
+                nuestro país.
+              </p>
+              <p class="text-gray-700 leading-relaxed">
+                Cada producto es hecho a mano con amor y dedicación, utilizando materiales sostenibles y 
+                de comercio justo. Creo firmemente en apoyar a las comunidades locales y preservar las 
+                tradiciones artesanales.
+              </p>
+            </div>
+
+            <!-- Timeline o hitos -->
+            <div class="mt-8 space-y-4">
+              <h3 class="text-xl font-bold text-primary mb-4">Logros destacados</h3>
+              <div class="space-y-3">
+                <div class="flex gap-4 items-start">
+                  <div class="w-3 h-3 rounded-full bg-accent mt-2 flex-shrink-0"></div>
+                  <div>
+                    <p class="font-semibold text-gray-800">2024 - Reconocimiento Artesano del Año</p>
+                    <p class="text-sm text-gray-600">Por la Asociación Nacional de Artesanos</p>
+                  </div>
+                </div>
+                <div class="flex gap-4 items-start">
+                  <div class="w-3 h-3 rounded-full bg-accent mt-2 flex-shrink-0"></div>
+                  <div>
+                    <p class="font-semibold text-gray-800">2023 - Participación en Feria Internacional</p>
+                    <p class="text-sm text-gray-600">Expo Artesanías del Mundo, Madrid</p>
+                  </div>
+                </div>
+                <div class="flex gap-4 items-start">
+                  <div class="w-3 h-3 rounded-full bg-accent mt-2 flex-shrink-0"></div>
+                  <div>
+                    <p class="font-semibold text-gray-800">2020 - Inicio de negocio propio</p>
+                    <p class="text-sm text-gray-600">Apertura de taller y tienda online</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sección: Productos -->
+          <div *ngIf="activeSection === 'products'" class="animate-fadeIn">
+            <h2 class="text-2xl font-bold text-primary mb-6">Mis Productos</h2>
+            
+            <!-- Grid de productos -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div 
+                *ngFor="let product of products"
+                class="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2"
+              >
+                <!-- Imagen del producto -->
+                <div class="relative h-48 overflow-hidden bg-gray-200">
+                  <img 
+                    [src]="product.image" 
+                    [alt]="product.name"
+                    class="w-full h-full object-cover"
+                  />
+                  <!-- Badge de disponibilidad -->
+                  <div 
+                    *ngIf="!product.available"
+                    class="absolute top-3 right-3 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold"
+                  >
+                    Agotado
+                  </div>
+                  <div 
+                    *ngIf="product.available"
+                    class="absolute top-3 right-3 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold"
+                  >
+                    Disponible
+                  </div>
+                </div>
+                
+                <!-- Info del producto -->
+                <div class="p-4">
+                  <h3 class="font-bold text-gray-800 mb-2 line-clamp-2">
+                    {{product.name}}
+                  </h3>
+                  <p class="text-2xl font-bold text-accent mb-3">
+                    {{formatPrice(product.price)}}
+                  </p>
+                  <button
+                    (click)="viewProduct(product.id)"
+                    [disabled]="!product.available"
+                    [class]="product.available
+                      ? 'w-full py-2 bg-primary hover:bg-primary-dark text-white font-semibold rounded-lg transition-colors duration-300'
+                      : 'w-full py-2 bg-gray-300 text-gray-500 font-semibold rounded-lg cursor-not-allowed'"
+                  >
+                    {{product.available ? 'Ver detalles' : 'No disponible'}}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Mensaje si no hay productos -->
+            <div *ngIf="products.length === 0" class="text-center py-12">
+              <p class="text-gray-500 text-lg">Aún no hay productos publicados</p>
+            </div>
+          </div>
+
+          <!-- Sección: Información -->
+          <div *ngIf="activeSection === 'info'" class="space-y-6 animate-fadeIn">
+            <h2 class="text-2xl font-bold text-primary mb-6">Información de Contacto</h2>
+            
+            <div class="space-y-4">
+              <!-- Redes Sociales -->
+              <div class="bg-primary-light rounded-xl p-6">
+                <h3 class="text-lg font-bold text-primary mb-4 flex items-center gap-2">
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z"/>
+                    <path d="M15 7v2a4 4 0 01-4 4H9.828l-1.766 1.767c.28.149.599.233.938.233h2l3 3v-3h2a2 2 0 002-2V9a2 2 0 00-2-2h-1z"/>
+                  </svg>
+                  Redes Sociales
+                </h3>
+                <div class="space-y-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                      <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                      </svg>
+                    </div>
+                    <div>
+                      <p class="font-semibold text-gray-800">Instagram</p>
+                      <p class="text-sm text-gray-600">{{user.socialMedia.instagram}}</p>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                      <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                      </svg>
+                    </div>
+                    <div>
+                      <p class="font-semibold text-gray-800">Facebook</p>
+                      <p class="text-sm text-gray-600">{{user.socialMedia.facebook}}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Correo Electrónico -->
+              <div class="bg-primary-light rounded-xl p-6">
+                <h3 class="text-lg font-bold text-primary mb-4 flex items-center gap-2">
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
+                    <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
+                  </svg>
+                  Correo Electrónico
+                </h3>
+                <p class="text-gray-700">{{user.socialMedia.email}}</p>
+              </div>
+
+              <!-- Horarios -->
+              <div class="bg-primary-light rounded-xl p-6">
+                <h3 class="text-lg font-bold text-primary mb-4 flex items-center gap-2">
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                  </svg>
+                  Horario de Atención
+                </h3>
+                <div class="space-y-2 text-gray-700">
+                  <p><strong>Lunes a Viernes:</strong> 9:00 AM - 6:00 PM</p>
+                  <p><strong>Sábados:</strong> 10:00 AM - 2:00 PM</p>
+                  <p><strong>Domingos:</strong> Cerrado</p>
+                </div>
+              </div>
+
+              <!-- Métodos de pago -->
+              <div class="bg-primary-light rounded-xl p-6">
+                <h3 class="text-lg font-bold text-primary mb-4 flex items-center gap-2">
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/>
+                    <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"/>
+                  </svg>
+                  Métodos de Pago
+                </h3>
+                <div class="flex flex-wrap gap-3">
+                  <span class="px-4 py-2 bg-white rounded-lg text-sm font-semibold text-gray-700 border border-gray-300">
+                    Efectivo
+                  </span>
+                  <span class="px-4 py-2 bg-white rounded-lg text-sm font-semibold text-gray-700 border border-gray-300">
+                    Transferencia
+                  </span>
+                  <span class="px-4 py-2 bg-white rounded-lg text-sm font-semibold text-gray-700 border border-gray-300">
+                    Nequi
+                  </span>
+                  <span class="px-4 py-2 bg-white rounded-lg text-sm font-semibold text-gray-700 border border-gray-300">
+                    Daviplata
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Estilos de animación -->
+<style>
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fadeIn {
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>
