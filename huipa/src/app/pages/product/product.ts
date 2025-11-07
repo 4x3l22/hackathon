@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
+import { CartService } from '../../services/cart.service';
 import Swal from 'sweetalert2';
 
 interface ProductImage {
@@ -92,7 +93,8 @@ export class Product implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private cartService: CartService
   ) {}
 
   ngOnInit(): void {
@@ -210,7 +212,16 @@ export class Product implements OnInit {
       return;
     }
 
-    // Aquí agregarías el producto al servicio del carrito
+    // Agregar al carrito usando el servicio
+    this.cartService.addToCart({
+      id: this.product.id,
+      name: this.product.name,
+      price: this.product.price,
+      quantity: this.quantity,
+      image: this.product.images[0].url
+    });
+
+    // Mostrar confirmación
     Swal.fire({
       icon: 'success',
       title: '¡Agregado al Carrito!',
@@ -226,8 +237,7 @@ export class Product implements OnInit {
       cancelButtonColor: '#6c757d'
     }).then((result) => {
       if (result.isConfirmed) {
-        // Navegar al carrito
-        // this.router.navigate(['/cart']);
+        this.router.navigate(['/cart']);
       }
     });
   }

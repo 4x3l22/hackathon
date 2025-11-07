@@ -4,6 +4,7 @@ import { Login } from './pages/login/login';
 import { Resetpassword } from './pages/resetpassword/resetpassword';
 import { Userprofile } from './pages/userprofile/userprofile';
 import { Product } from './pages/product/product';
+import { Carshop } from './pages/carshop/carshop';
 
 export const routes: Routes = [
     {
@@ -25,5 +26,9 @@ export const routes: Routes = [
     {
         path: 'product/:id',
         component: Product
+    },
+    {
+        path: 'cart',
+        component: Carshop
     }
 ];
