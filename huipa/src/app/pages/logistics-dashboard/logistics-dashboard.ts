@@ -31,8 +31,23 @@ export class LogisticsDashboard implements OnInit {
   usuarioActual: any;
   cargando = true;
 
+  // Control de vistas
+  vistaActual: 'negocios' | 'pedidos' = 'negocios';
+
   // Control de selección de productos
   productosSeleccionados: Map<number, ProductoSeleccionado> = new Map();
+
+  // Pedidos
+  pedidos: PedidoDB[] = [];
+  pedidoSeleccionado: PedidoDB | null = null;
+  pedidoDetalleInfo: {
+    cliente: UsuarioDB | null;
+    transportista: UsuarioDB | null;
+    producto: ProductoDB | null;
+    logistica: UsuarioDB | null;
+  } | null = null;
+  mostrarDetallePedido = false;
+  cargandoPedidos = false;
 
   // Modal de pedido
   mostrarModalPedido = false;
@@ -278,7 +293,7 @@ export class LogisticsDashboard implements OnInit {
       const promesasPedidos: Promise<number>[] = [];
 
       this.productosSeleccionados.forEach(({ producto }) => {
-        const pedido: Omit<PedidoDB, 'id' | 'createdAt'> = {
+        const pedido: Omit<PedidoDB, 'id' | 'createdAt' | 'numeroPedido'> = {
           productoId: producto.id!,
           clienteId: this.formularioPedido.clienteId,
           transportistaId: this.formularioPedido.transportistaId,
@@ -306,6 +321,11 @@ export class LogisticsDashboard implements OnInit {
       this.productosSeleccionados.clear();
       this.cerrarModalPedido();
 
+      // Recargar pedidos si estamos en esa vista
+      if (this.vistaActual === 'pedidos') {
+        await this.cargarPedidos();
+      }
+
     } catch (error) {
       console.error('Error al crear pedidos:', error);
       Swal.fire({
@@ -319,6 +339,149 @@ export class LogisticsDashboard implements OnInit {
 
   getProductosSeleccionadosArray(): ProductoSeleccionado[] {
     return Array.from(this.productosSeleccionados.values());
+  }
+
+  // =====================================================
+  // MÉTODOS PARA VISTA DE PEDIDOS
+  // =====================================================
+
+  cambiarVista(vista: 'negocios' | 'pedidos'): void {
+    this.vistaActual = vista;
+    if (vista === 'pedidos' && this.pedidos.length === 0) {
+      this.cargarPedidos();
+    }
+  }
+
+  async cargarPedidos(): Promise<void> {
+    this.cargandoPedidos = true;
+    try {
+      this.pedidos = await this.indexedDBService.obtenerTodosLosPedidos();
+      // Ordenar por fecha de creación (más recientes primero)
+      this.pedidos.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      console.log('Pedidos cargados:', this.pedidos.length);
+    } catch (error) {
+      console.error('Error al cargar pedidos:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'No se pudieron cargar los pedidos',
+        confirmButtonColor: '#d33'
+      });
+    } finally {
+      this.cargandoPedidos = false;
+    }
+  }
+
+  async verDetallePedido(pedido: PedidoDB): Promise<void> {
+    this.pedidoSeleccionado = pedido;
+    
+    try {
+      // Cargar información relacionada
+      const [cliente, transportista, producto, logistica] = await Promise.all([
+        this.indexedDBService.obtenerTodosLosUsuarios().then(usuarios => 
+          usuarios.find(u => u.id === pedido.clienteId) || null
+        ),
+        this.indexedDBService.obtenerTodosLosUsuarios().then(usuarios => 
+          usuarios.find(u => u.id === pedido.transportistaId) || null
+        ),
+        this.indexedDBService.obtenerProductoPorId(pedido.productoId),
+        this.indexedDBService.obtenerTodosLosUsuarios().then(usuarios => 
+          usuarios.find(u => u.id === pedido.logisticaId) || null
+        )
+      ]);
+
+      this.pedidoDetalleInfo = {
+        cliente,
+        transportista,
+        producto,
+        logistica
+      };
+
+      this.mostrarDetallePedido = true;
+    } catch (error) {
+      console.error('Error al cargar detalle del pedido:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'No se pudo cargar la información del pedido',
+        confirmButtonColor: '#d33'
+      });
+    }
+  }
+
+  cerrarDetallePedido(): void {
+    this.mostrarDetallePedido = false;
+    this.pedidoSeleccionado = null;
+    this.pedidoDetalleInfo = null;
+  }
+
+  async cambiarEstadoPedido(pedidoId: number, nuevoEstado: PedidoDB['estado']): Promise<void> {
+    try {
+      await this.indexedDBService.actualizarEstadoPedido(pedidoId, nuevoEstado);
+      
+      Swal.fire({
+        icon: 'success',
+        title: 'Estado actualizado',
+        text: `El pedido ahora está en estado: ${nuevoEstado}`,
+        confirmButtonColor: '#3C8D40',
+        timer: 2000
+      });
+
+      // Actualizar la lista
+      await this.cargarPedidos();
+      
+      // Si estamos viendo el detalle, actualizar también
+      if (this.pedidoSeleccionado && this.pedidoSeleccionado.id === pedidoId) {
+        const pedidoActualizado = this.pedidos.find(p => p.id === pedidoId);
+        if (pedidoActualizado) {
+          this.pedidoSeleccionado = pedidoActualizado;
+        }
+      }
+
+    } catch (error) {
+      console.error('Error al cambiar estado:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'No se pudo actualizar el estado del pedido',
+        confirmButtonColor: '#d33'
+      });
+    }
+  }
+
+  async obtenerClientePedido(clienteId: number): Promise<UsuarioDB | null> {
+    const usuarios = await this.indexedDBService.obtenerTodosLosUsuarios();
+    return usuarios.find(u => u.id === clienteId) || null;
+  }
+
+  async obtenerProductoPedido(productoId: number): Promise<ProductoDB | null> {
+    const productos = await this.indexedDBService.obtenerTodosLosProductos();
+    return productos.find(p => p.id === productoId) || null;
+  }
+
+  async obtenerTransportistaPedido(transportistaId: number): Promise<UsuarioDB | null> {
+    const usuarios = await this.indexedDBService.obtenerTodosLosUsuarios();
+    return usuarios.find(u => u.id === transportistaId) || null;
+  }
+
+  getEstadoBadgeClass(estado: string): string {
+    switch (estado) {
+      case 'pendiente': return 'bg-yellow-100 text-yellow-800';
+      case 'en_transito': return 'bg-blue-100 text-blue-800';
+      case 'entregado': return 'bg-green-100 text-green-800';
+      case 'cancelado': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  }
+
+  getEstadoTexto(estado: string): string {
+    switch (estado) {
+      case 'pendiente': return 'Pendiente';
+      case 'en_transito': return 'En Tránsito';
+      case 'entregado': return 'Entregado';
+      case 'cancelado': return 'Cancelado';
+      default: return estado;
+    }
   }
 
   cerrarSesion(): void {
