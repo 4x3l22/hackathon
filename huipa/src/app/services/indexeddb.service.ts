@@ -28,6 +28,7 @@ export interface ProductoDB {
 
 export interface PedidoDB {
   id?: number; // Auto-incrementado por IndexedDB
+  numeroPedido: string; // Identificador único del pedido (9 dígitos)
   productoId: number; // Foreign key - producto solicitado
   clienteId: number; // Foreign key - usuario cliente (rol: cliente/usuario)
   transportistaId: number; // Foreign key - usuario transportista
@@ -72,7 +73,7 @@ export interface UsuarioDB {
 })
 export class IndexedDBService {
   private dbName = 'huipa';
-  private version = 5; // Incrementado para agregar tabla de pedidos
+  private version = 6; // Incrementado para asegurar creación de tabla pedidos
   private storeName = 'usuarios';
   private productStoreName = 'productos';
   private businessStoreName = 'datosNegocio'; // Nueva tabla para datos de negocio
@@ -168,6 +169,7 @@ export class IndexedDBService {
           });
 
           // Crear índices para búsquedas rápidas
+          pedidosStore.createIndex('numeroPedido', 'numeroPedido', { unique: true });
           pedidosStore.createIndex('productoId', 'productoId', { unique: false });
           pedidosStore.createIndex('clienteId', 'clienteId', { unique: false });
           pedidosStore.createIndex('transportistaId', 'transportistaId', { unique: false });
@@ -883,9 +885,18 @@ export class IndexedDBService {
   // =====================================================
 
   /**
+   * Generar número de pedido único de 9 dígitos
+   */
+  private generarNumeroPedido(): string {
+    const timestamp = Date.now().toString().slice(-6); // Últimos 6 dígitos del timestamp
+    const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0'); // 3 dígitos aleatorios
+    return timestamp + random;
+  }
+
+  /**
    * Crear un nuevo pedido
    */
-  async crearPedido(pedido: Omit<PedidoDB, 'id' | 'createdAt'>): Promise<number> {
+  async crearPedido(pedido: Omit<PedidoDB, 'id' | 'createdAt' | 'numeroPedido'>): Promise<number> {
     const db = await this.ensureDB();
 
     return new Promise((resolve, reject) => {
@@ -894,6 +905,7 @@ export class IndexedDBService {
 
       const pedidoCompleto: Omit<PedidoDB, 'id'> = {
         ...pedido,
+        numeroPedido: this.generarNumeroPedido(),
         createdAt: new Date().toISOString()
       };
 

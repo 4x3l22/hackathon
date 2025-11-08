@@ -11,29 +11,58 @@
         Cerrar Sesión
       </button>
     </div>
+
+    <!-- Pestañas de Navegación -->
+    <div class="max-w-7xl mx-auto px-4 border-t border-gray-200">
+      <div class="flex gap-2">
+        <button 
+          (click)="cambiarVista('negocios')"
+          [class.border-[#8B5A2B]]="vistaActual === 'negocios'"
+          [class.text-[#8B5A2B]]="vistaActual === 'negocios'"
+          [class.border-transparent]="vistaActual !== 'negocios'"
+          [class.text-gray-600]="vistaActual !== 'negocios'"
+          class="px-6 py-3 border-b-2 font-medium hover:text-[#8B5A2B] transition duration-200">
+          Negocios y Productos
+        </button>
+        <button 
+          (click)="cambiarVista('pedidos')"
+          [class.border-[#8B5A2B]]="vistaActual === 'pedidos'"
+          [class.text-[#8B5A2B]]="vistaActual === 'pedidos'"
+          [class.border-transparent]="vistaActual !== 'pedidos'"
+          [class.text-gray-600]="vistaActual !== 'pedidos'"
+          class="px-6 py-3 border-b-2 font-medium hover:text-[#8B5A2B] transition duration-200">
+          Mis Pedidos
+        </button>
+      </div>
+    </div>
   </header>
 
   <!-- Contenido Principal -->
   <main class="max-w-7xl mx-auto px-4 py-8">
-    <!-- Barra de acciones -->
-    <div *ngIf="!cargando && negocios.length > 0" class="mb-6 flex justify-between items-center">
-      <div>
-        <h2 class="text-xl font-bold text-[#8B5A2B] mb-2">Negocios Registrados</h2>
-        <p class="text-gray-600">Total: {{negocios.length}} negocios</p>
-      </div>
-      
-      <!-- Botón Hacer Pedido -->
-      <button 
-        (click)="abrirModalPedido()"
-        [disabled]="!hayProductosSeleccionados"
-        [class.opacity-50]="!hayProductosSeleccionados"
-        [class.cursor-not-allowed]="!hayProductosSeleccionados"
-        class="px-6 py-3 bg-[#3C8D40] text-white rounded-lg hover:bg-green-700 transition duration-300 flex items-center gap-2 font-medium shadow-md">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-        </svg>
-        Hacer Pedido
-        <span *ngIf="hayProductosSeleccionados" class="bg-white text-[#3C8D40] px-2 py-1 rounded-full text-sm font-bold">
+    
+    <!-- ======================================== -->
+    <!-- VISTA DE NEGOCIOS Y PRODUCTOS -->
+    <!-- ======================================== -->
+    <div *ngIf="vistaActual === 'negocios'">
+      <!-- Barra de acciones -->
+      <div *ngIf="!cargando && negocios.length > 0" class="mb-6 flex justify-between items-center">
+        <div>
+          <h2 class="text-xl font-bold text-[#8B5A2B] mb-2">Negocios Registrados</h2>
+          <p class="text-gray-600">Total: {{negocios.length}} negocios</p>
+        </div>
+        
+        <!-- Botón Hacer Pedido -->
+        <button 
+          (click)="abrirModalPedido()"
+          [disabled]="!hayProductosSeleccionados"
+          [class.opacity-50]="!hayProductosSeleccionados"
+          [class.cursor-not-allowed]="!hayProductosSeleccionados"
+          class="px-6 py-3 bg-[#3C8D40] text-white rounded-lg hover:bg-green-700 transition duration-300 flex items-center gap-2 font-medium shadow-md">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+          </svg>
+          Hacer Pedido
+          <span *ngIf="hayProductosSeleccionados" class="bg-white text-[#3C8D40] px-2 py-1 rounded-full text-sm font-bold">
           {{totalProductosSeleccionados}}
         </span>
       </button>
@@ -210,7 +239,293 @@
         </div>
       </div>
     </div>
+    </div>
+    <!-- Fin Vista Negocios -->
+
+    <!-- ======================================== -->
+    <!-- VISTA DE PEDIDOS -->
+    <!-- ======================================== -->
+    <div *ngIf="vistaActual === 'pedidos'">
+      <!-- Estado de carga -->
+      <div *ngIf="cargandoPedidos" class="flex items-center justify-center py-12">
+        <div class="text-center">
+          <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-[#D6A84E] mx-auto mb-4"></div>
+          <p class="text-[#8B5A2B] font-medium">Cargando pedidos...</p>
+        </div>
+      </div>
+
+      <!-- Sin pedidos -->
+      <div *ngIf="!cargandoPedidos && pedidos.length === 0" class="text-center py-12">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-24 w-24 text-gray-400 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        <h3 class="text-xl font-semibold text-gray-700 mb-2">No hay pedidos registrados</h3>
+        <p class="text-gray-500">Aún no has creado ningún pedido</p>
+      </div>
+
+      <!-- Lista de Pedidos -->
+      <div *ngIf="!cargandoPedidos && pedidos.length > 0">
+        <div class="mb-6">
+          <h2 class="text-xl font-bold text-[#8B5A2B] mb-2">Mis Pedidos</h2>
+          <p class="text-gray-600">Total: {{pedidos.length}} pedidos</p>
+        </div>
+
+        <!-- Grid de Tarjetas de Pedidos -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div *ngFor="let pedido of pedidos" 
+            class="bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 overflow-hidden border-l-4"
+            [class.border-yellow-500]="pedido.estado === 'pendiente'"
+            [class.border-blue-500]="pedido.estado === 'en_transito'"
+            [class.border-green-500]="pedido.estado === 'entregado'"
+            [class.border-red-500]="pedido.estado === 'cancelado'">
+            
+            <!-- Header de la tarjeta -->
+            <div class="bg-gradient-to-r from-[#8B5A2B] to-[#D6A84E] text-white p-4">
+              <div class="flex justify-between items-start mb-2">
+                <div>
+                  <p class="text-xs opacity-80">Pedido</p>
+                  <p class="text-lg font-bold">#{{pedido.numeroPedido}}</p>
+                </div>
+                <span class="px-3 py-1 rounded-full text-xs font-semibold"
+                  [ngClass]="getEstadoBadgeClass(pedido.estado)">
+                  {{getEstadoTexto(pedido.estado)}}
+                </span>
+              </div>
+              <p class="text-xs opacity-80">{{pedido.createdAt | date:'short'}}</p>
+            </div>
+
+            <!-- Contenido de la tarjeta -->
+            <div class="p-4">
+              <!-- Total del envío -->
+              <div class="mb-4 bg-[#F3F1ED] rounded-lg p-3">
+                <p class="text-xs text-gray-600 mb-1">Total del Envío</p>
+                <p class="text-2xl font-bold text-[#D6A84E]">${{pedido.total | number:'1.0-0'}}</p>
+              </div>
+
+              <!-- Información de rutas -->
+              <div class="space-y-2 mb-4">
+                <div class="flex items-start gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  <div>
+                    <p class="text-xs text-gray-500">Origen</p>
+                    <p class="text-sm font-medium text-gray-800">{{pedido.lugarOrigen}}</p>
+                  </div>
+                </div>
+                <div class="flex items-start gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  <div>
+                    <p class="text-xs text-gray-500">Destino</p>
+                    <p class="text-sm font-medium text-gray-800">{{pedido.lugarDestino}}</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Botón ver detalle -->
+              <button 
+                (click)="verDetallePedido(pedido)"
+                class="w-full px-4 py-2 bg-[#8B5A2B] text-white rounded-lg hover:bg-[#6d4522] transition duration-300 flex items-center justify-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+                Ver Detalle
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Fin Vista Pedidos -->
+
   </main>
+
+  <!-- Modal de Detalle de Pedido -->
+  <div *ngIf="mostrarDetallePedido && pedidoSeleccionado" 
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <!-- Header del Modal -->
+      <div class="bg-gradient-to-r from-[#8B5A2B] to-[#D6A84E] text-white px-6 py-4 flex justify-between items-center sticky top-0 z-10">
+        <div>
+          <h2 class="text-2xl font-bold">Pedido #{{pedidoSeleccionado.numeroPedido}}</h2>
+          <p class="text-sm opacity-90">{{pedidoSeleccionado.createdAt | date:'medium'}}</p>
+        </div>
+        <button (click)="cerrarDetallePedido()" class="text-white hover:text-gray-200 transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Contenido del Modal -->
+      <div class="p-6 space-y-6">
+        <!-- Estado del Pedido -->
+        <div class="bg-gray-50 rounded-lg p-4">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Estado del Pedido</label>
+          <select 
+            [value]="pedidoSeleccionado.estado"
+            (change)="cambiarEstadoPedido(pedidoSeleccionado.id!, $any($event.target).value)"
+            class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-[#8B5A2B] focus:border-transparent font-medium">
+            <option value="pendiente">⏳ Pendiente</option>
+            <option value="en_transito">🚚 En Tránsito</option>
+            <option value="entregado">✅ Entregado</option>
+            <option value="cancelado">❌ Cancelado</option>
+          </select>
+        </div>
+
+        <!-- Total -->
+        <div class="bg-[#D6A84E] bg-opacity-10 rounded-lg p-4 border-2 border-[#D6A84E]">
+          <p class="text-sm text-gray-600 mb-1">Total del Envío</p>
+          <p class="text-3xl font-bold text-[#D6A84E]">${{pedidoSeleccionado.total | number:'1.0-0'}}</p>
+        </div>
+
+        <!-- Información de Rutas -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="bg-green-50 rounded-lg p-4 border border-green-200">
+            <div class="flex items-center gap-2 mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              <p class="font-semibold text-green-800">Origen</p>
+            </div>
+            <p class="text-gray-700">{{pedidoSeleccionado.lugarOrigen}}</p>
+          </div>
+
+          <div class="bg-red-50 rounded-lg p-4 border border-red-200">
+            <div class="flex items-center gap-2 mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              <p class="font-semibold text-red-800">Destino</p>
+            </div>
+            <p class="text-gray-700">{{pedidoSeleccionado.lugarDestino}}</p>
+          </div>
+        </div>
+
+        <!-- Información Adicional -->
+        <div class="space-y-4">
+          <div class="border-t pt-4">
+            <p class="text-sm font-medium text-gray-600 mb-4">Personas Involucradas</p>
+            
+            <!-- Cliente -->
+            <div class="bg-blue-50 rounded-lg p-4 mb-3 border border-blue-200">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                </div>
+                <div class="flex-1">
+                  <p class="text-xs text-blue-600 font-medium">Cliente</p>
+                  <p class="font-semibold text-gray-800" *ngIf="pedidoDetalleInfo?.cliente">
+                    {{pedidoDetalleInfo!.cliente!.firstName}} {{pedidoDetalleInfo!.cliente!.lastName}}
+                  </p>
+                  <p class="text-sm text-gray-600" *ngIf="pedidoDetalleInfo?.cliente">
+                    {{pedidoDetalleInfo!.cliente!.email}}
+                  </p>
+                  <p class="text-sm text-gray-500" *ngIf="!pedidoDetalleInfo?.cliente">
+                    Cliente no encontrado (ID: {{pedidoSeleccionado.clienteId}})
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Transportista -->
+            <div class="bg-purple-50 rounded-lg p-4 mb-3 border border-purple-200">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center text-white font-bold">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" />
+                  </svg>
+                </div>
+                <div class="flex-1">
+                  <p class="text-xs text-purple-600 font-medium">Transportista</p>
+                  <p class="font-semibold text-gray-800" *ngIf="pedidoDetalleInfo?.transportista">
+                    {{pedidoDetalleInfo!.transportista!.firstName}} {{pedidoDetalleInfo!.transportista!.lastName}}
+                  </p>
+                  <p class="text-sm text-gray-600" *ngIf="pedidoDetalleInfo?.transportista">
+                    {{pedidoDetalleInfo!.transportista!.phone}}
+                  </p>
+                  <p class="text-sm text-gray-500" *ngIf="!pedidoDetalleInfo?.transportista">
+                    Transportista no encontrado (ID: {{pedidoSeleccionado.transportistaId}})
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Producto -->
+            <div class="bg-amber-50 rounded-lg p-4 mb-3 border border-amber-200">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-amber-500 rounded-full flex items-center justify-center text-white font-bold">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                  </svg>
+                </div>
+                <div class="flex-1">
+                  <p class="text-xs text-amber-600 font-medium">Producto</p>
+                  <p class="font-semibold text-gray-800" *ngIf="pedidoDetalleInfo?.producto">
+                    {{pedidoDetalleInfo!.producto!.nombre}}
+                  </p>
+                  <p class="text-sm text-gray-600" *ngIf="pedidoDetalleInfo?.producto">
+                    {{pedidoDetalleInfo!.producto!.categoria}} - ${{pedidoDetalleInfo!.producto!.precio | number:'1.0-0'}}
+                  </p>
+                  <p class="text-sm text-gray-500" *ngIf="!pedidoDetalleInfo?.producto">
+                    Producto no encontrado (ID: {{pedidoSeleccionado.productoId}})
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Logística -->
+            <div class="bg-green-50 rounded-lg p-4 border border-green-200">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white font-bold">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                </div>
+                <div class="flex-1">
+                  <p class="text-xs text-green-600 font-medium">Gestionado por (Logística)</p>
+                  <p class="font-semibold text-gray-800" *ngIf="pedidoDetalleInfo?.logistica">
+                    {{pedidoDetalleInfo!.logistica!.firstName}} {{pedidoDetalleInfo!.logistica!.lastName}}
+                  </p>
+                  <p class="text-sm text-gray-600" *ngIf="pedidoDetalleInfo?.logistica">
+                    {{pedidoDetalleInfo!.logistica!.email}}
+                  </p>
+                  <p class="text-sm text-gray-500" *ngIf="!pedidoDetalleInfo?.logistica">
+                    Usuario de logística no encontrado (ID: {{pedidoSeleccionado.logisticaId}})
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="border-t pt-4" *ngIf="pedidoSeleccionado.updatedAt">
+            <p class="text-sm text-gray-500">
+              Última actualización: {{pedidoSeleccionado.updatedAt | date:'medium'}}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer del Modal -->
+      <div class="bg-gray-50 px-6 py-4 flex justify-end sticky bottom-0">
+        <button 
+          (click)="cerrarDetallePedido()"
+          class="px-6 py-2 bg-[#8B5A2B] text-white rounded-lg hover:bg-[#6d4522] transition duration-300 font-medium">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- Modal de Pedido -->
   <div *ngIf="mostrarModalPedido" 
