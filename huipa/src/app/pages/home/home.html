@@ -8,12 +8,32 @@
       </svg>
     </button>
 
-    <h1 class="text-lg md:text-2xl font-bold text-[#8B5A2B]">Artesanías del Huila</h1>
+    <h1 class="text-lg md:text-2xl font-bold text-[#8B5A2B] flex-grow">Artesanías del Huila</h1>
+
+    <!-- Botón Cerrar Sesión -->
+    <button 
+      (click)="cerrarSesion()"
+      class="hidden md:flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-300">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+      </svg>
+      <span class="font-medium">Cerrar sesión</span>
+    </button>
 
     <!-- Notification icon (SVG) -->
     <button aria-label="notifications" class="h-6 w-6 md:hidden text-[#8B5A2B] inline-flex items-center justify-center">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1" />
+      </svg>
+    </button>
+    
+    <!-- Botón Cerrar Sesión móvil -->
+    <button 
+      (click)="cerrarSesion()"
+      aria-label="cerrar sesión"
+      class="h-6 w-6 md:hidden text-red-600 inline-flex items-center justify-center">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
       </svg>
     </button>
   </header>
@@ -22,11 +42,7 @@
   <app-navbar></app-navbar>
 
   <!-- Search -->
-<<<<<<< Updated upstream
   <div class="px-4 mb-3 mt-3">
-=======
-  <div class="px-4 mb-3 mt-4">
->>>>>>> Stashed changes
     <div class="relative">
       <input type="text" placeholder="Buscar artesanías, historias..."
         class="w-full pr-12 pl-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#D6A84E] search-input" />
@@ -54,22 +70,17 @@
   <section class="px-4 mb-6">
     <h2 class="text-lg font-semibold text-[#8B5A2B] mb-3">Historias Destacadas</h2>
     <div class="flex gap-4 overflow-x-auto pb-2">
-      <!-- Card: use flex-col and make content stretch so button stays at bottom -->
-      <div class="story-card bg-white rounded-2xl shadow-md w-72 flex-shrink-0 flex flex-col overflow-hidden">
-        <img src="https://images.unsplash.com/photo-1691437980595-c0357bf461d7?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1170" alt="historia-1" class="w-full h-44 object-cover">
+      <!-- Card dinámica para cada historia -->
+      <div *ngFor="let historia of historias" class="story-card bg-white rounded-2xl shadow-md w-72 flex-shrink-0 flex flex-col overflow-hidden">
+        <img [src]="historia.imagenPerfil" [alt]="historia.nombre" class="w-full h-44 object-cover">
         <div class="p-4 flex flex-col flex-1">
-          <p class="text-base font-semibold text-[#5A3B2A]">María, la Guardiana del Tejido</p>
-          <p class="text-sm text-gray-500 mt-1">Descubre la historia detrás de cada hilo en Suaza.</p>
-          <button class="mt-auto w-full text-center py-2 rounded-full border border-[#E7DFD6] bg-[#FBF9F7] text-[#6B4A34] font-medium">Leer más</button>
-        </div>
-      </div>
-
-      <div class="story-card bg-white rounded-2xl shadow-md w-72 flex-shrink-0 flex flex-col overflow-hidden">
-        <img src="https://plus.unsplash.com/premium_photo-1663091253666-656583e5faf5?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1170" alt="historia-2" class="w-full h-44 object-cover">
-        <div class="p-4 flex flex-col flex-1">
-          <p class="text-base font-semibold text-[#5A3B2A]">Carlos, el Maestro de la Madera</p>
-          <p class="text-sm text-gray-500 mt-1">El alma de la madera en cada creación.</p>
-          <button class="mt-auto w-full text-center py-2 rounded-full border border-[#E7DFD6] bg-[#FBF9F7] text-[#6B4A34] font-medium">Leer más</button>
+          <p class="text-base font-semibold text-[#5A3B2A]">{{ historia.nombre }}</p>
+          <p class="text-sm text-gray-500 mt-1 line-clamp-2">{{ historia.descripcionHistoria }}</p>
+          <button 
+            (click)="verHistoria(historia.id)"
+            class="mt-auto w-full text-center py-2 rounded-full border border-[#E7DFD6] bg-[#FBF9F7] text-[#6B4A34] font-medium hover:bg-[#E7DFD6] transition-colors">
+            Leer más
+          </button>
         </div>
       </div>
     </div>
@@ -79,35 +90,23 @@
   <section class="px-4 mb-6 pb-6">
     <h2 class="text-lg font-semibold text-[#8B5A2B] mb-3">Nuevos Productos</h2>
     <div class="flex gap-4 overflow-x-auto pb-2">
-      <!-- Product card -->
-      <article class="product-card bg-white rounded-2xl shadow-md w-64 flex-shrink-0 relative overflow-hidden">
+      <!-- Product card dinámica para cada producto -->
+      <article 
+        *ngFor="let producto of productos" 
+        (click)="verProducto(producto.id)"
+        class="product-card bg-white rounded-2xl shadow-md w-64 flex-shrink-0 relative overflow-hidden cursor-pointer hover:shadow-lg transition-shadow">
         <span class="badge absolute left-3 top-3 text-xs font-medium">Nuevo</span>
-        <img src="https://artesaniasdelatlantico.com/wp-content/uploads/2021/05/Jarron-Barro-colombiano.jpg" alt="producto-1" class="w-full h-40 object-cover">
+        <img [src]="producto.imagenes[0]" [alt]="producto.nombre" class="w-full h-40 object-cover">
         <div class="p-4">
-          <p class="text-sm font-semibold text-[#5A3B2A]">Jarrón de la Chiva</p>
-          <p class="text-xs text-gray-500">por Carlos Peréz</p>
+          <p class="text-sm font-semibold text-[#5A3B2A]">{{ producto.nombre }}</p>
+          <p class="text-xs text-gray-500">por {{ producto.artesano.nombre }}</p>
           <div class="flex items-center justify-between mt-3">
-            <p class="text-[#3C8D40] font-bold">$120.000</p>
-            <button class="cart-btn" aria-label="Agregar al carrito">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4" />
-                <circle cx="10" cy="20" r="1" fill="currentColor"></circle>
-                <circle cx="18" cy="20" r="1" fill="currentColor"></circle>
-              </svg>
-            </button>
-          </div>
-        </div>
-      </article>
-
-      <article class="product-card bg-white rounded-2xl shadow-md w-64 flex-shrink-0 relative overflow-hidden">
-        <span class="badge absolute left-3 top-3 text-xs font-medium">Nuevo</span>
-        <img src="https://images.unsplash.com/photo-1745284504844-7979176dc29b?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=664" alt="producto-2" class="w-full h-40 object-cover">
-        <div class="p-4">
-          <p class="text-sm font-semibold text-[#5A3B2A]">Sombrero Suaceño</p>
-          <p class="text-xs text-gray-500">por María Rojas</p>
-          <div class="flex items-center justify-between mt-3">
-            <p class="text-[#3C8D40] font-bold">$250.000</p>
-            <button class="cart-btn" aria-label="Agregar al carrito">
+            <p class="text-[#3C8D40] font-bold">{{ formatearPrecio(producto.precio) }}</p>
+            <button 
+              (click)="agregarAlCarrito(producto, $event)"
+              class="cart-btn" 
+              aria-label="Agregar al carrito"
+              title="Agregar al carrito">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4" />
                 <circle cx="10" cy="20" r="1" fill="currentColor"></circle>

@@ -2,72 +2,139 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
-import { take } from 'rxjs/operators';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
+import { UsuarioDB } from '../../services/indexeddb.service';
 
 @Component({
   selector: 'app-register',
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule, FormsModule],
   templateUrl: './register.html',
+  styleUrls: ['./register.css']
 })
 export class RegisterComponent {
   form: FormGroup;
-  role: 'usuario' | 'artesano' | 'logistico' = 'usuario';
+  selectedRole: 'cliente' | 'artesano' | 'logistica' | 'transportista' = 'cliente';
   previewUrl: string | null = null;
   imageBase64: string | null = null;
   // Optional workshop section
   workshopPhotos: Array<{ previewUrl: string; base64: string }> = [];
 
-  constructor(private fb: FormBuilder, private authService: AuthService) {
+  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
     this.form = this.fb.group({
       firstName: ['', [Validators.required, Validators.minLength(2)]],
       lastName: ['', [Validators.required, Validators.minLength(2)]],
       birthDate: ['', [Validators.required]],
-      residence: ['', [Validators.required]],
-      phone: ['', [Validators.required, Validators.minLength(10)]],
+      documentType: ['', [Validators.required]],
+      documentNumber: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-  bio: [''] ,
-  showWorkshop: [false]
+      // Campos opcionales solo para artesanos
+      residence: [''],
+      street: [''],
+      addressNumber: [''],
+      neighborhood: [''],
+      houseNumber: [''],
+      phone: [''],
+      bio: [''],
+      showWorkshop: [false]
     });
   }
 
-  onSubmit(): void {
-    if (this.form.valid) {
-      // Prepare payload to send to the (future) AuthService
-        const payload: any = {
-          ...this.form.value,
-          role: this.role,
-          image: this.imageBase64 // base64 string or null
-        };
-
-        // include optional workshop info only if the section is enabled
-        if (this.form.get('showWorkshop')?.value) {
-          if (this.form.get('bio')) payload.bio = this.form.get('bio')?.value || null;
-          if (this.workshopPhotos && this.workshopPhotos.length) {
-            payload.workshopPhotos = this.workshopPhotos.map((p) => p.base64);
-          }
-        }
-
-      // Subscribe to the AuthService.register - ready for the real implementation later
-      this.authService.register(payload).pipe(take(1)).subscribe({
-        next: (res: any) => {
-          // handle success (redirect, show toast, etc.)
-          console.log('register success', res);
-        },
-        error: (err: any) => {
-          // handle error
-          console.error('register error', err);
-        }
-      });
-    } else {
+  async onSubmit(): Promise<void> {
+    if (!this.form.valid) {
       this.form.markAllAsTouched();
+      Swal.fire({
+        icon: 'warning',
+        title: 'Formulario incompleto',
+        text: 'Por favor completa todos los campos requeridos',
+        confirmButtonColor: '#8B5A2B'
+      });
+      return;
+    }
+
+    try {
+      // Preparar datos del usuario para IndexedDB
+      const usuarioData: Omit<UsuarioDB, 'id' | 'createdAt'> = {
+        email: this.form.value.email,
+        password: this.form.value.password,
+        firstName: this.form.value.firstName,
+        lastName: this.form.value.lastName,
+        birthDate: this.form.value.birthDate,
+        documentType: this.form.value.documentType,
+        documentNumber: this.form.value.documentNumber,
+        residence: this.form.value.residence || '',
+        street: this.form.value.street || '',
+        addressNumber: this.form.value.addressNumber || '',
+        neighborhood: this.form.value.neighborhood || '',
+        houseNumber: this.form.value.houseNumber || '',
+        phone: this.form.value.phone || '',
+        photo: this.imageBase64 || undefined,
+        rol: this.selectedRole,
+        isArtisan: this.selectedRole === 'artesano',
+        artisanData: this.selectedRole === 'artesano' ? {
+          lifeStory: this.form.value.bio || '',
+          workshopGallery: this.workshopPhotos.map(p => p.base64)
+        } : undefined
+      };
+
+      console.log('Registrando usuario con rol:', this.selectedRole);
+      console.log('Datos completos del usuario:', usuarioData);
+
+      // Registrar usuario en IndexedDB
+      const userId = await this.authService.registrarUsuario(usuarioData);
+
+      // Mostrar mensaje de éxito
+      await Swal.fire({
+        icon: 'success',
+        title: '¡Registro exitoso!',
+        text: 'Tu cuenta ha sido creada correctamente',
+        confirmButtonColor: '#3C8D40',
+        timer: 2000,
+        showConfirmButton: false
+      });
+
+      // Redirigir al login
+      this.router.navigate(['/login']);
+
+    } catch (error: any) {
+      console.error('Error al registrar:', error);
+      
+      Swal.fire({
+        icon: 'error',
+        title: 'Error en el registro',
+        text: error.message || 'No se pudo completar el registro',
+        confirmButtonColor: '#d33'
+      });
     }
   }
 
-  setRole(r: 'usuario' | 'artesano' | 'logistico') {
-    this.role = r;
+  setRole(r: 'cliente' | 'artesano' | 'logistica' | 'transportista') {
+    this.selectedRole = r;
+    
+    // Actualizar validadores según el rol
+    const camposArtesano = ['residence', 'street', 'addressNumber', 'neighborhood', 'houseNumber', 'phone'];
+    
+    if (r === 'artesano') {
+      // Hacer campos requeridos para artesano
+      camposArtesano.forEach(campo => {
+        this.form.get(campo)?.setValidators([Validators.required]);
+        this.form.get(campo)?.updateValueAndValidity();
+      });
+      // Activar el switch de artesano
+      this.form.get('showWorkshop')?.setValue(true);
+    } else {
+      // Quitar validadores requeridos para otros roles
+      camposArtesano.forEach(campo => {
+        this.form.get(campo)?.clearValidators();
+        this.form.get(campo)?.updateValueAndValidity();
+      });
+      // Desactivar el switch de artesano
+      this.form.get('showWorkshop')?.setValue(false);
+      this.workshopPhotos = [];
+    }
   }
 
   onFileSelected(event: Event) {

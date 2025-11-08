@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
+import { historiasDestacadas, HistoriaDestacada } from '../../../utils/historiasDestacadas';
 
 @Component({
   selector: 'app-userprofile',
@@ -9,7 +10,9 @@ import { Location } from '@angular/common';
   templateUrl: './userprofile.html',
   styles: ``,
 })
-export class Userprofile {
+export class Userprofile implements OnInit {
+  historiaSeleccionada: HistoriaDestacada | null = null;
+  
   // Datos del usuario (serán dinámicos desde el backend)
   user = {
     name: 'María González',
@@ -34,7 +37,14 @@ export class Userprofile {
   activeSection: 'story' | 'products' | 'info' = 'story';
 
   // Productos del usuario (simulados)
-  products = [
+  products: Array<{
+    id: number;
+    name: string;
+    price: number;
+    image: string;
+    available: boolean;
+    descripcion?: string;
+  }> = [
     {
       id: 1,
       name: 'Bolso artesanal tejido',
@@ -79,7 +89,38 @@ export class Userprofile {
     }
   ];
 
-  constructor(private router: Router, private location: Location) {}
+  constructor(
+    private router: Router, 
+    private route: ActivatedRoute,
+    private location: Location
+  ) {}
+
+  ngOnInit(): void {
+    // Obtener el id de la ruta
+    const id = this.route.snapshot.paramMap.get('id');
+    
+    if (id) {
+      // Buscar la historia correspondiente
+      this.historiaSeleccionada = historiasDestacadas.find(h => h.id === Number(id)) || null;
+      
+      if (this.historiaSeleccionada) {
+        // Actualizar datos del usuario con la historia seleccionada
+        this.user.name = this.historiaSeleccionada.nombre;
+        this.user.profileImage = this.historiaSeleccionada.imagenPerfil;
+        this.user.bio = this.historiaSeleccionada.descripcionHistoria;
+        
+        // Mapear productos de la historia (sin precios para evitar compra)
+        this.products = this.historiaSeleccionada.productos.map((prod, index) => ({
+          id: index + 1,
+          name: prod.nombre,
+          price: 0, // Sin precio para evitar compra
+          image: prod.imagen,
+          available: true,
+          descripcion: prod.descripcionBreve
+        }));
+      }
+    }
+  }
 
   // Volver a la página anterior
   goBack(): void {

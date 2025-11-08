@@ -1,208 +1,255 @@
 <div class="min-h-screen flex items-center justify-center bg-[#F3F1ED] px-4 py-8">
-  <div class="bg-white shadow-xl rounded-xl overflow-hidden flex w-full max-w-5xl">
-    <!-- Lado izquierdo: Formulario -->
-    <div class="w-full md:w-1/2 p-8 flex flex-col justify-center">
-      <h1 class="text-4xl font-bold text-[#8B5A2B] mb-3 animate-fade-in text-center">¡Regístrate en nuestra comunidad!
+  <div class="bg-white shadow-xl rounded-xl overflow-hidden flex w-full max-w-7xl my-8">
+    <!-- Lado izquierdo: Formulario con scroll -->
+    <div class="w-full lg:w-3/5 p-8 max-h-[90vh] overflow-y-auto">
+      <h1 class="text-3xl font-bold text-[#8B5A2B] mb-2 animate-fade-in text-center">¡Regístrate en nuestra comunidad!
       </h1>
-      <p class="text-lg text-[#8B5A2B] mb-8 text-center">Descubre el alma del huila</p>
+      <p class="text-base text-[#8B5A2B] mb-6 text-center">Descubre el alma del huila</p>
 
-      <!-- Subir foto (opcional) con preview y botón eliminar -->
-      <div>
-        <div class="flex flex-col items-center gap-3 mb-5">
-          <div
-            class="w-32 h-32 rounded-full bg-[#F6F4F1] border border-dashed border-gray-300 flex items-center justify-center overflow-hidden">
-            <img *ngIf="previewUrl; else placeholder" [src]="previewUrl" alt="preview"
-              class="w-full h-full object-cover" />
-            <ng-template #placeholder>
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-gray-300" viewBox="0 0 24 24" fill="none"
-                aria-hidden="true">
-                <!-- Camera body -->
-                <path
-                  d="M3.5 8.5a2 2 0 0 1 2-2h2.5l1.2-1.2a1 1 0 0 1 .7-.3h5.6a1 1 0 0 1 .7.3L17.5 6.5H20a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H5.5a2 2 0 0 1-2-2v-7z"
-                  stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
-                <!-- Lens -->
-                <circle cx="11.8" cy="12.2" r="3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
-                  stroke-linejoin="round" />
-                <!-- Plus sign (top-right) -->
-                <path d="M18.5 4.5v2.2M17.4 5.6h2.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
-                  stroke-linejoin="round" />
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <!-- Selector de Rol -->
+        <div class="mb-6">
+          <label class="block text-sm font-medium text-[#8B5A2B] mb-3">Selecciona tu rol</label>
+          <div class="grid grid-cols-2 gap-3">
+            <button type="button" (click)="setRole('cliente')"
+              [class.ring-2]="selectedRole === 'cliente'"
+              [class.ring-[#D6A84E]]="selectedRole === 'cliente'"
+              [class.bg-[#F6F4F1]]="selectedRole === 'cliente'"
+              class="flex flex-col items-center justify-center p-3 border-2 border-gray-200 rounded-lg hover:border-[#D6A84E] transition duration-200">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#8B5A2B] mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
               </svg>
-            </ng-template>
+              <span class="text-xs font-medium text-[#8B5A2B]">Cliente</span>
+            </button>
+
+            <button type="button" (click)="setRole('artesano')"
+              [class.ring-2]="selectedRole === 'artesano'"
+              [class.ring-[#D6A84E]]="selectedRole === 'artesano'"
+              [class.bg-[#F6F4F1]]="selectedRole === 'artesano'"
+              class="flex flex-col items-center justify-center p-3 border-2 border-gray-200 rounded-lg hover:border-[#D6A84E] transition duration-200">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#8B5A2B] mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+              </svg>
+              <span class="text-xs font-medium text-[#8B5A2B]">Artesano</span>
+            </button>
+
+            <button type="button" (click)="setRole('logistica')"
+              [class.ring-2]="selectedRole === 'logistica'"
+              [class.ring-[#D6A84E]]="selectedRole === 'logistica'"
+              [class.bg-[#F6F4F1]]="selectedRole === 'logistica'"
+              class="flex flex-col items-center justify-center p-3 border-2 border-gray-200 rounded-lg hover:border-[#D6A84E] transition duration-200">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#8B5A2B] mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+              </svg>
+              <span class="text-xs font-medium text-[#8B5A2B]">Logística</span>
+            </button>
+
+            <button type="button" (click)="setRole('transportista')"
+              [class.ring-2]="selectedRole === 'transportista'"
+              [class.ring-[#D6A84E]]="selectedRole === 'transportista'"
+              [class.bg-[#F6F4F1]]="selectedRole === 'transportista'"
+              class="flex flex-col items-center justify-center p-3 border-2 border-gray-200 rounded-lg hover:border-[#D6A84E] transition duration-200">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#8B5A2B] mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" />
+              </svg>
+              <span class="text-xs font-medium text-[#8B5A2B]">Transportista</span>
+            </button>
           </div>
-
-          <div class="flex gap-2">
-            <label class="px-4 py-2 rounded-lg bg-white border border-gray-200 text-sm text-[#8B5A2B] cursor-pointer">
-              Seleccionar foto
-              <input type="file" accept="image/*" (change)="onFileSelected($event)" hidden>
-            </label>
-            <button type="button" (click)="clearImage()"
-              class="px-4 py-2 rounded-lg bg-gray-100 text-sm text-gray-600 border border-gray-200">Eliminar
-              foto</button>
-          </div>
-        </div>
-      </div>
-
-
-      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-5">
-        <!-- Nombres -->
-        <div>
-          <label class="block text-sm font-medium text-[#8B5A2B] mb-1">Nombres</label>
-          <input type="text" formControlName="firstName" placeholder="Tus nombres"
-            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#D6A84E] focus:outline-none transition duration-300">
         </div>
 
-        <!-- Apellidos -->
-        <div>
-          <label class="block text-sm font-medium text-[#8B5A2B] mb-1">Apellidos</label>
-          <input type="text" formControlName="lastName" placeholder="Tus apellidos"
-            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#D6A84E] focus:outline-none transition duration-300">
-        </div>
-
-        <!-- Fecha de nacimiento -->
-        <div>
-          <label class="block text-sm font-medium text-[#8B5A2B] mb-1">Fecha de nacimiento</label>
-          <input type="date" formControlName="birthDate" placeholder="DD/MM/AAAA"
-            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#D6A84E] focus:outline-none transition duration-300">
-        </div>
-
-        <!-- Tipo de Documento -->
-        <div>
-          <label class="block text-sm font-medium text-[#8B5A2B] mb-1">Tipo de Documentoo</label>
-          <input type="text" formControlName="phone" placeholder="+57 3001234567"
-            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#D6A84E] focus:outline-none transition duration-300">
-        </div>
-
-        <!-- Documento de identidad -->
-        <div>
-          <label class="block text-sm font-medium text-[#8B5A2B] mb-1">Número de Documento</label>
-          <input type="text" formControlName="phone" placeholder="1075332641"
-            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#D6A84E] focus:outline-none transition duration-300">
-        </div>
-
-        <!-- Lugar de residencia -->
-        <div>
-          <label class="block text-sm font-medium text-[#8B5A2B] mb-1">Lugar de residencia</label>
-          <input type="text" formControlName="residence" placeholder="Ciudad, País"
-            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#D6A84E] focus:outline-none transition duration-300">
-        </div>
-
-        <!-- calle / carrera / avinida / transversal -->
-        <div>
-          <label class="block text-sm font-medium text-[#8B5A2B] mb-1">calle / carrera / avinida / transversal</label>
-          <input type="text" formControlName="residence" placeholder="calle / carrera / avinida / transversal / diagonal"
-            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#D6A84E] focus:outline-none transition duration-300">
-        </div>
-
-        <!-- numero de dirección -->
-        <div>
-          <label class="block text-sm font-medium text-[#8B5A2B] mb-1">numero de dirección</label>
-          <input type="text" formControlName="residence" placeholder="20B #40-39"
-            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#D6A84E] focus:outline-none transition duration-300">
-        </div>
-
-        <!-- Barrio y/o conjunto -->
-        <div>
-          <label class="block text-sm font-medium text-[#8B5A2B] mb-1">Barrio y/o conjunto</label>
-          <input type="text" formControlName="residence" placeholder="el jardin / los ocobos"
-            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#D6A84E] focus:outline-none transition duration-300">
-        </div>
-
-        <!-- número de casa -->
-        <div>
-          <label class="block text-sm font-medium text-[#8B5A2B] mb-1">número de casa</label>
-          <input type="text" formControlName="residence" placeholder="casa #123 torre A"
-            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#D6A84E] focus:outline-none transition duration-300">
-        </div>
-
-        <!-- Teléfono -->
-        <div>
-          <label class="block text-sm font-medium text-[#8B5A2B] mb-1">Número de teléfono</label>
-          <input type="text" formControlName="phone" placeholder="+573001234567"
-            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#D6A84E] focus:outline-none transition duration-300">
-        </div>
-
-        <!-- Correo electrónico -->
-        <div>
-          <label class="block text-sm font-medium text-[#8B5A2B] mb-1">Correo electrónico</label>
-          <input type="email" formControlName="email" placeholder="Ingresa tu correo"
-            [ngClass]="{ 'border-red-500 ring-1 ring-red-300': form.get('email')?.invalid && (form.get('email')?.touched || form.get('email')?.dirty) }"
-            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#D6A84E] focus:outline-none transition duration-300">
-          <p *ngIf="form.get('email')?.invalid && (form.get('email')?.touched || form.get('email')?.dirty)"
-            class="text-sm text-red-600 mt-1">Por favor ingresa un correo válido.</p>
-        </div>
-
-        <!-- Contraseña -->
-        <div>
-          <label class="block text-sm font-medium text-[#8B5A2B] mb-1">Contraseña</label>
-          <input type="password" formControlName="password" placeholder="Crea una contraseña segura"
-            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#D6A84E] focus:outline-none transition duration-300">
-        </div>
-
-        <hr />
-
-        <!-- Switch para mostrar datos adicionales: historia de vida y galería de taller -->
-        <div class="flex items-center justify-left mb-6">
-          <label class="flex items-center cursor-pointer select-none">
-            <span class="mr-3 text-sm font-medium text-[#8B5A2B]">¿Eres Artesano?</span>
-            <div class="relative">
-              <input id="workshop-switch" type="checkbox" class="sr-only" formControlName="showWorkshop">
-              <div class="block bg-gray-200 w-14 h-8 rounded-full"></div>
-              <div class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition-transform"
-                [class.translate-x-6]="form.get('showWorkshop')?.value" [ngStyle]="{ 'box-shadow': '0 1px 2px rgba(0,0,0,0.06)' }"></div>
+        <!-- Subir foto (opcional) con preview y botón eliminar -->
+        <div class="mb-6">
+          <div class="flex flex-col items-center gap-2">
+            <div
+              class="w-24 h-24 rounded-full bg-[#F6F4F1] border border-dashed border-gray-300 flex items-center justify-center overflow-hidden">
+              <img *ngIf="previewUrl; else placeholder" [src]="previewUrl" alt="preview"
+                class="w-full h-full object-cover" />
+              <ng-template #placeholder>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-300" viewBox="0 0 24 24" fill="none"
+                  aria-hidden="true">
+                  <path
+                    d="M3.5 8.5a2 2 0 0 1 2-2h2.5l1.2-1.2a1 1 0 0 1 .7-.3h5.6a1 1 0 0 1 .7.3L17.5 6.5H20a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H5.5a2 2 0 0 1-2-2v-7z"
+                    stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+                  <circle cx="11.8" cy="12.2" r="3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                  <path d="M18.5 4.5v2.2M17.4 5.6h2.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                </svg>
+              </ng-template>
             </div>
-          </label>
+
+            <div class="flex gap-2">
+              <label class="px-3 py-1.5 rounded-lg bg-white border border-gray-200 text-xs text-[#8B5A2B] cursor-pointer">
+                Seleccionar foto
+                <input type="file" accept="image/*" (change)="onFileSelected($event)" hidden>
+              </label>
+              <button type="button" (click)="clearImage()"
+                class="px-3 py-1.5 rounded-lg bg-gray-100 text-xs text-gray-600 border border-gray-200">Eliminar</button>
+            </div>
+          </div>
         </div>
 
-        <div *ngIf="form.get('showWorkshop')?.value" class="mb-6">
+        <!-- Información básica -->
+        <div class="mb-6">
+          <h3 class="text-base font-semibold text-[#8B5A2B] mb-4">Información básica</h3>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Nombres -->
+            <div>
+              <label class="block text-sm font-medium text-[#8B5A2B] mb-1">Nombres</label>
+              <input type="text" formControlName="firstName" placeholder="Tus nombres"
+                class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#D6A84E] focus:outline-none transition duration-300">
+            </div>
+
+            <!-- Apellidos -->
+            <div>
+              <label class="block text-sm font-medium text-[#8B5A2B] mb-1">Apellidos</label>
+              <input type="text" formControlName="lastName" placeholder="Tus apellidos"
+                class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#D6A84E] focus:outline-none transition duration-300">
+            </div>
+
+            <!-- Fecha de nacimiento -->
+            <div>
+              <label class="block text-sm font-medium text-[#8B5A2B] mb-1">Fecha de nacimiento</label>
+              <input type="date" formControlName="birthDate"
+                class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#D6A84E] focus:outline-none transition duration-300">
+            </div>
+
+            <!-- Tipo de Documento -->
+            <div>
+              <label class="block text-sm font-medium text-[#8B5A2B] mb-1">Tipo de Documento</label>
+              <input type="text" formControlName="documentType" placeholder="Cédula, Pasaporte, etc."
+                class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#D6A84E] focus:outline-none transition duration-300">
+            </div>
+
+            <!-- Documento de identidad -->
+            <div>
+              <label class="block text-sm font-medium text-[#8B5A2B] mb-1">Número de Documento</label>
+              <input type="text" formControlName="documentNumber" placeholder="1075332641"
+                class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#D6A84E] focus:outline-none transition duration-300">
+            </div>
+
+            <!-- Correo electrónico -->
+            <div>
+              <label class="block text-sm font-medium text-[#8B5A2B] mb-1">Correo electrónico</label>
+              <input type="email" formControlName="email" placeholder="Ingresa tu correo"
+                [ngClass]="{ 'border-red-500 ring-1 ring-red-300': form.get('email')?.invalid && (form.get('email')?.touched || form.get('email')?.dirty) }"
+                class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#D6A84E] focus:outline-none transition duration-300">
+              <p *ngIf="form.get('email')?.invalid && (form.get('email')?.touched || form.get('email')?.dirty)"
+                class="text-xs text-red-600 mt-1">Por favor ingresa un correo válido.</p>
+            </div>
+
+            <!-- Contraseña -->
+            <div>
+              <label class="block text-sm font-medium text-[#8B5A2B] mb-1">Contraseña</label>
+              <input type="password" formControlName="password" placeholder="Crea una contraseña segura"
+                class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#D6A84E] focus:outline-none transition duration-300">
+            </div>
+          </div>
+        </div>
+
+        <!-- Campos adicionales solo para ARTESANOS -->
+        <div *ngIf="selectedRole === 'artesano'" class="pt-6 border-t-2 border-gray-200">
+          <h3 class="text-base font-semibold text-[#8B5A2B] mb-4">Información de dirección (Artesano)</h3>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Lugar de residencia -->
+            <div>
+              <label class="block text-sm font-medium text-[#8B5A2B] mb-1">Lugar de residencia</label>
+              <input type="text" formControlName="residence" placeholder="Ciudad, País"
+                class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#D6A84E] focus:outline-none transition duration-300">
+            </div>
+
+            <!-- calle / carrera / avinida / transversal -->
+            <div>
+              <label class="block text-sm font-medium text-[#8B5A2B] mb-1">Calle / Carrera / Avenida</label>
+              <input type="text" formControlName="street" placeholder="Calle / Carrera / Avenida"
+                class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#D6A84E] focus:outline-none transition duration-300">
+            </div>
+
+            <!-- numero de dirección -->
+            <div>
+              <label class="block text-sm font-medium text-[#8B5A2B] mb-1">Número de dirección</label>
+              <input type="text" formControlName="addressNumber" placeholder="20B #40-39"
+                class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#D6A84E] focus:outline-none transition duration-300">
+            </div>
+
+            <!-- Barrio y/o conjunto -->
+            <div>
+              <label class="block text-sm font-medium text-[#8B5A2B] mb-1">Barrio y/o conjunto</label>
+              <input type="text" formControlName="neighborhood" placeholder="El jardín / Los ocobos"
+                class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#D6A84E] focus:outline-none transition duration-300">
+            </div>
+
+            <!-- número de casa -->
+            <div>
+              <label class="block text-sm font-medium text-[#8B5A2B] mb-1">Número de casa</label>
+              <input type="text" formControlName="houseNumber" placeholder="Casa #123 Torre A"
+                class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#D6A84E] focus:outline-none transition duration-300">
+            </div>
+
+            <!-- Teléfono -->
+            <div>
+              <label class="block text-sm font-medium text-[#8B5A2B] mb-1">Número de teléfono</label>
+              <input type="text" formControlName="phone" placeholder="+573001234567"
+                class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#D6A84E] focus:outline-none transition duration-300">
+            </div>
+          </div>
+
           <!-- Historia de vida -->
-          <label class="block text-sm font-medium text-[#8B5A2B] mb-2">Historia de vida</label>
-          <textarea formControlName="bio" rows="4"
-            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#D6A84E] focus:outline-none transition duration-300 mb-4"
-            placeholder="Cuenta tu historia, tu oficio o lo que quieras compartir..."></textarea>
+          <div class="mt-4">
+            <label class="block text-sm font-medium text-[#8B5A2B] mb-1">Historia de vida</label>
+            <textarea formControlName="bio" rows="3"
+              class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#D6A84E] focus:outline-none transition duration-300"
+              placeholder="Cuenta tu historia, tu oficio o lo que quieras compartir..."></textarea>
+          </div>
 
           <!-- Galería de taller: múltiples fotos -->
-          <label class="block text-sm font-medium text-[#8B5A2B] mb-2">Foto o Galería del taller</label>
-          <div class="flex flex-col gap-3">
-            <div class="flex flex-wrap gap-3">
-              <div *ngFor="let p of workshopPhotos; let i = index"
-                class="w-20 h-20 rounded-md overflow-hidden relative bg-gray-100 border">
-                <img [src]="p.previewUrl" class="w-full h-full object-cover" alt="foto-taller-{{i}}">
-                <button type="button" (click)="removeWorkshopPhoto(i)"
-                  class="absolute -top-0 -right-0 bg-white text-red-600 rounded-full w-6 h-6 flex items-center justify-center shadow">×</button>
+          <div class="mt-4">
+            <label class="block text-sm font-medium text-[#8B5A2B] mb-2">Foto o Galería del taller</label>
+            <div class="flex flex-col gap-3">
+              <div class="flex flex-wrap gap-2">
+                <div *ngFor="let p of workshopPhotos; let i = index"
+                  class="w-16 h-16 rounded-md overflow-hidden relative bg-gray-100 border">
+                  <img [src]="p.previewUrl" class="w-full h-full object-cover" alt="foto-taller-{{i}}">
+                  <button type="button" (click)="removeWorkshopPhoto(i)"
+                    class="absolute -top-1 -right-1 bg-white text-red-600 rounded-full w-5 h-5 flex items-center justify-center shadow text-xs">×</button>
+                </div>
               </div>
-            </div>
 
-            <div class="flex gap-2 items-center">
-              <label class="px-4 py-2 rounded-lg bg-white border border-gray-200 text-sm text-[#8B5A2B] cursor-pointer">
-                Seleccionar fotos
-                <input type="file" accept="image/*" (change)="onWorkshopFilesSelected($event)" hidden multiple>
-              </label>
-              <button type="button" *ngIf="workshopPhotos.length" (click)="clearWorkshopPhotos()"
-                class="px-4 py-2 rounded-lg bg-gray-100 text-sm text-gray-600 border border-gray-200">Eliminar
-                todas</button>
+              <div class="flex gap-2 items-center">
+                <label class="px-3 py-1.5 rounded-lg bg-white border border-gray-200 text-xs text-[#8B5A2B] cursor-pointer">
+                  Seleccionar fotos
+                  <input type="file" accept="image/*" (change)="onWorkshopFilesSelected($event)" hidden multiple>
+                </label>
+                <button type="button" *ngIf="workshopPhotos.length" (click)="clearWorkshopPhotos()"
+                  class="px-3 py-1.5 rounded-lg bg-gray-100 text-xs text-gray-600 border border-gray-200">Eliminar
+                  todas</button>
+              </div>
             </div>
           </div>
         </div>
 
-
         <!-- Botón Registro -->
-        <button type="submit" [disabled]="!form.valid" class="w-full bg-[#D6A84E] text-white font-semibold py-3 rounded-lg shadow-md transform
-      hover:scale-105 transition duration-300
-               {{form.valid 
-                 ? 'hover:-translate-y-1 hover:shadow-2xl cursor-pointer hover:bg-[#8B5A2B] ' 
-                 : 'bg-gray-400 cursor-not-allowed opacity-60'}}">
-          Registrarme
-        </button>
+        <div class="mt-6">
+          <button type="submit" [disabled]="!form.valid" 
+            class="w-full py-2.5 rounded-lg font-semibold shadow-md transform transition duration-300"
+            [ngClass]="form.valid 
+              ? 'bg-[#D6A84E] text-white hover:bg-[#8B5A2B] hover:-translate-y-1 hover:shadow-2xl cursor-pointer' 
+              : 'bg-gray-400 text-gray-200 cursor-not-allowed opacity-60'">
+            Registrarme
+          </button>
+        </div>
       </form>
 
       <!-- Link ¿Ya tienes cuenta? -->
-      <div class="mt-6 text-center">
-        <a href="/login" class="text-[#2C6CA9] hover:underline">¿Ya tienes una cuenta? Inicia sesión</a>
+      <div class="mt-4 text-center">
+        <a href="/login" class="text-sm text-[#2C6CA9] hover:underline">¿Ya tienes una cuenta? Inicia sesión</a>
       </div>
     </div>
 
     <!-- Lado derecho: Imagen alusiva -->
-    <div class="hidden md:block w-1/2 bg-cover bg-center"
+    <div class="hidden lg:block w-2/5 bg-cover bg-center"
       style="background-image: url('https://images.unsplash.com/photo-1697823411816-83f5f6df51f9?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=687');">
     </div>
   </div>

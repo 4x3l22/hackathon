@@ -13,6 +13,8 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
+            "outputPath": "dist/huipa",
+            "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
               "zone.js"
@@ -28,7 +30,7 @@
               "src/styles.css"
             ],
             "server": "src/main.server.ts",
-            "outputMode": "server",
+            "prerender": false,
             "ssr": {
               "entry": "src/server.ts"
             }
@@ -75,6 +77,7 @@
         "test": {
           "builder": "@angular/build:karma",
           "options": {
+            "outputPath": "dist/huipa/test",
             "polyfills": [
               "zone.js",
               "zone.js/testing"
