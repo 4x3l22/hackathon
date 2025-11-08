@@ -1,0 +1,29 @@
+/* Navbar active state */
+.nav-link {
+	color: #8B5A2B; /* default brown */
+}
+.nav-link.active {
+	color: #2B83FF; /* active blue like reference */
+}
+.nav-link svg {
+	stroke: currentColor;
+	fill: none;
+}
+.nav-link.active svg {
+	stroke: currentColor;
+	fill: currentColor;
+}
+
+/* subtle active indicator (small rounded bar at left of navbar) */
+.fixed.bottom-0.w-full.bg-white.shadow-md::before {
+	content: '';
+	position: absolute;
+	left: 6px;
+	top: -6px;
+	bottom: -6px;
+	width: 6px;
+	background: #2B83FF;
+	border-radius: 8px;
+	opacity: 0.08;
+}
+

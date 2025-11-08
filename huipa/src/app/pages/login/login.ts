@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
-import { RouterLink } from "@angular/router";
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -11,42 +12,72 @@ import { RouterLink } from "@angular/router";
   styleUrl: './login.css',
 })
 export class Login {
-  phoneNumber: string = '';
+  email: string = '';
   password: string = '';
 
-  get isPhoneValid(): boolean {
-    // Debe ser exactamente 10 dígitos numéricos
-    const phoneRegex = /^\d{10}$/;
-    return phoneRegex.test(this.phoneNumber);
+  constructor(
+    private router: Router,
+    private authService: AuthService
+  ) {}
+
+  get isEmailValid(): boolean {
+    // Validación básica de email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(this.email);
   }
 
   get isPasswordValid(): boolean {
-    // Mínimo 8 caracteres
-    return this.password.length >= 8;
+    // Mínimo 6 caracteres
+    return this.password.length >= 6;
   }
 
   get isFormValid(): boolean {
-    return this.isPhoneValid && this.isPasswordValid;
+    return this.isEmailValid && this.isPasswordValid;
   }
 
-  onPhoneInput(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    // Eliminar caracteres no numéricos y limitar a 10 dígitos
-    input.value = input.value.replace(/\D/g, '').slice(0, 10);
-    this.phoneNumber = input.value;
-  }
-
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     if (!this.isFormValid) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Datos incompletos',
+        text: 'Por favor verifica el email y la contraseña',
+        confirmButtonColor: '#8B5A2B'
+      });
       return;
     }
 
-    // Aquí iría la lógica de autenticación
-    Swal.fire({
-      icon: 'success',
-      title: '¡Bienvenido!',
-      text: 'Inicio de sesión exitoso',
-      confirmButtonColor: '#4CAF50'
-    });
+    // Validar credenciales contra mock y base de datos
+    const usuario = await this.authService.loginWithCredentials(this.email, this.password);
+
+    if (usuario) {
+      // Mostrar mensaje de éxito
+      Swal.fire({
+        icon: 'success',
+        title: `¡Bienvenido ${usuario.nombre}!`,
+        text: usuario.rol === 'artesano' ? 'Acceso como Artesano' : 'Acceso como Usuario',
+        confirmButtonColor: '#3C8D40',
+        timer: 2000,
+        showConfirmButton: false
+      });
+
+      // Redirigir según el rol del usuario
+      setTimeout(() => {
+        if (usuario.rol === 'artesano') {
+          this.router.navigate(['/artisan-dashboard']);
+        } else if (usuario.rol === 'logistica') {
+          this.router.navigate(['/logistics-dashboard']);
+        } else {
+          this.router.navigate(['/home']);
+        }
+      }, 2000);
+    } else {
+      // Credenciales incorrectas
+      Swal.fire({
+        icon: 'error',
+        title: 'Error de autenticación',
+        text: 'Email o contraseña incorrectos',
+        confirmButtonColor: '#d33'
+      });
+    }
   }
 }

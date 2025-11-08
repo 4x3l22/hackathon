@@ -1,0 +1,121 @@
+<div class="min-h-screen bg-[#F3F1ED] flex flex-col">
+  <!-- Header -->
+  <header class="bg-white shadow-md p-4 flex justify-between items-center md:justify-start md:gap-8">
+    <!-- Menu icon (SVG) -->
+    <button aria-label="menu" class="h-6 w-6 md:hidden text-[#8B5A2B] inline-flex items-center justify-center">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+    </button>
+
+    <h1 class="text-lg md:text-2xl font-bold text-[#8B5A2B] flex-grow">Artesanías del Huila</h1>
+
+    <!-- Botón Cerrar Sesión -->
+    <button 
+      (click)="cerrarSesion()"
+      class="hidden md:flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-300">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+      </svg>
+      <span class="font-medium">Cerrar sesión</span>
+    </button>
+
+    <!-- Notification icon (SVG) -->
+    <button aria-label="notifications" class="h-6 w-6 md:hidden text-[#8B5A2B] inline-flex items-center justify-center">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1" />
+      </svg>
+    </button>
+    
+    <!-- Botón Cerrar Sesión móvil -->
+    <button 
+      (click)="cerrarSesion()"
+      aria-label="cerrar sesión"
+      class="h-6 w-6 md:hidden text-red-600 inline-flex items-center justify-center">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+      </svg>
+    </button>
+  </header>
+
+  <!-- Navbar integrado debajo del header -->
+  <app-navbar></app-navbar>
+
+  <!-- Search -->
+  <div class="px-4 mb-3 mt-3">
+    <div class="relative">
+      <input type="text" placeholder="Buscar artesanías, historias..."
+        class="w-full pr-12 pl-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#D6A84E] search-input" />
+      <button aria-label="buscar" class="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-[#8B5A2B] search-button">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Banner principal (fixed height to avoid stretching) -->
+  <div class="px-4 mb-6">
+    <div class="relative h-56 rounded-2xl overflow-hidden">
+      <img src="https://images.unsplash.com/photo-1755716302361-3d2c12bfa008?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1959" alt="banner-artesania" class="w-full h-full object-cover">
+      <div class="carousel-dots absolute left-1/2 -translate-x-1/2 bottom-3 flex gap-2">
+        <span class="dot active"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Historias Destacadas -->
+  <section class="px-4 mb-6">
+    <h2 class="text-lg font-semibold text-[#8B5A2B] mb-3">Historias Destacadas</h2>
+    <div class="flex gap-4 overflow-x-auto pb-2">
+      <!-- Card dinámica para cada historia -->
+      <div *ngFor="let historia of historias" class="story-card bg-white rounded-2xl shadow-md w-72 flex-shrink-0 flex flex-col overflow-hidden">
+        <img [src]="historia.imagenPerfil" [alt]="historia.nombre" class="w-full h-44 object-cover">
+        <div class="p-4 flex flex-col flex-1">
+          <p class="text-base font-semibold text-[#5A3B2A]">{{ historia.nombre }}</p>
+          <p class="text-sm text-gray-500 mt-1 line-clamp-2">{{ historia.descripcionHistoria }}</p>
+          <button 
+            (click)="verHistoria(historia.id)"
+            class="mt-auto w-full text-center py-2 rounded-full border border-[#E7DFD6] bg-[#FBF9F7] text-[#6B4A34] font-medium hover:bg-[#E7DFD6] transition-colors">
+            Leer más
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Nuevos Productos -->
+  <section class="px-4 mb-6 pb-6">
+    <h2 class="text-lg font-semibold text-[#8B5A2B] mb-3">Nuevos Productos</h2>
+    <div class="flex gap-4 overflow-x-auto pb-2">
+      <!-- Product card dinámica para cada producto -->
+      <article 
+        *ngFor="let producto of productos" 
+        (click)="verProducto(producto.id)"
+        class="product-card bg-white rounded-2xl shadow-md w-64 flex-shrink-0 relative overflow-hidden cursor-pointer hover:shadow-lg transition-shadow">
+        <span class="badge absolute left-3 top-3 text-xs font-medium">Nuevo</span>
+        <img [src]="producto.imagenes[0]" [alt]="producto.nombre" class="w-full h-40 object-cover">
+        <div class="p-4">
+          <p class="text-sm font-semibold text-[#5A3B2A]">{{ producto.nombre }}</p>
+          <p class="text-xs text-gray-500">por {{ producto.artesano.nombre }}</p>
+          <div class="flex items-center justify-between mt-3">
+            <p class="text-[#3C8D40] font-bold">{{ formatearPrecio(producto.precio) }}</p>
+            <button 
+              (click)="agregarAlCarrito(producto, $event)"
+              class="cart-btn" 
+              aria-label="Agregar al carrito"
+              title="Agregar al carrito">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4" />
+                <circle cx="10" cy="20" r="1" fill="currentColor"></circle>
+                <circle cx="18" cy="20" r="1" fill="currentColor"></circle>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+</div>

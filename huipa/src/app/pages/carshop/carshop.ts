@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { CartService, CartItem } from '../../services/cart.service';
+import { ProductService, ItemCarrito } from '../../services/product.service';
 import { Subscription } from 'rxjs';
 import Swal from 'sweetalert2';
 
@@ -12,7 +12,7 @@ import Swal from 'sweetalert2';
   styles: ``,
 })
 export class Carshop implements OnInit, OnDestroy {
-  cartItems: CartItem[] = [];
+  cartItems: ItemCarrito[] = [];
   subtotal: number = 0;
   shippingCost: number = 0;
   total: number = 0;
@@ -20,13 +20,13 @@ export class Carshop implements OnInit, OnDestroy {
   private cartSubscription?: Subscription;
 
   constructor(
-    private cartService: CartService,
+    private productService: ProductService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
     // Suscribirse a los cambios del carrito
-    this.cartSubscription = this.cartService.cartItems$.subscribe(items => {
+    this.cartSubscription = this.productService.carrito$.subscribe(items => {
       this.cartItems = items;
       this.updateTotals();
     });
@@ -40,24 +40,54 @@ export class Carshop implements OnInit, OnDestroy {
 
   // Actualizar totales
   private updateTotals(): void {
-    this.subtotal = this.cartService.getSubtotal();
-    this.shippingCost = this.cartService.getShippingCost();
-    this.total = this.cartService.getTotal();
+    this.subtotal = this.productService.getPrecioTotal();
+    // Envío gratis si el subtotal es mayor a 80,000
+    this.shippingCost = this.subtotal > 80000 ? 0 : 5000;
+    this.total = this.subtotal + this.shippingCost;
   }
 
   // Incrementar cantidad
   increaseQuantity(productId: number): void {
-    this.cartService.increaseQuantity(productId);
+    const item = this.cartItems.find(i => i.producto.id === productId);
+    if (item) {
+      this.productService.actualizarCantidad(productId, item.cantidad + 1);
+    }
   }
 
   // Decrementar cantidad
   decreaseQuantity(productId: number): void {
-    this.cartService.decreaseQuantity(productId);
+    const item = this.cartItems.find(i => i.producto.id === productId);
+    if (item && item.cantidad > 1) {
+      this.productService.actualizarCantidad(productId, item.cantidad - 1);
+    } else if (item && item.cantidad === 1) {
+      this.removeItem(productId);
+    }
   }
 
   // Eliminar producto
   removeItem(productId: number): void {
-    this.cartService.removeFromCart(productId);
+    Swal.fire({
+      title: '¿Eliminar producto?',
+      text: '¿Estás seguro de que quieres eliminar este producto del carrito?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3C8D40',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.productService.eliminarDelCarrito(productId);
+        Swal.fire({
+          icon: 'success',
+          title: 'Eliminado',
+          text: 'El producto ha sido eliminado del carrito',
+          confirmButtonColor: '#3C8D40',
+          timer: 1500,
+          showConfirmButton: false
+        });
+      }
+    });
   }
 
   // Formatear precio
@@ -71,7 +101,7 @@ export class Carshop implements OnInit, OnDestroy {
 
   // Volver atrás
   goBack(): void {
-    this.router.navigate(['/profile']);
+    this.router.navigate(['/home']);
   }
 
   // Proceder al pago
@@ -81,7 +111,7 @@ export class Carshop implements OnInit, OnDestroy {
         icon: 'warning',
         title: 'Carrito Vacío',
         text: 'Agrega productos al carrito antes de proceder al pago',
-        confirmButtonColor: '#a07034'
+        confirmButtonColor: '#3C8D40'
       });
       return;
     }
@@ -92,12 +122,12 @@ export class Carshop implements OnInit, OnDestroy {
       html: `
         <div class="text-left">
           <p class="mb-2"><strong>Resumen del pedido:</strong></p>
-          <p>Items: ${this.cartService.getTotalItems()}</p>
+          <p>Items: ${this.productService.getCantidadTotal()}</p>
           <p>Total: ${this.formatPrice(this.total)}</p>
           <p class="mt-4 text-sm text-gray-600">Serás redirigido al proceso de pago...</p>
         </div>
       `,
-      confirmButtonColor: '#a07034',
+      confirmButtonColor: '#3C8D40',
       confirmButtonText: 'Continuar'
     }).then(() => {
       // Aquí redirigiría a la vista de checkout/pago
@@ -107,7 +137,7 @@ export class Carshop implements OnInit, OnDestroy {
 
   // Continuar comprando
   continueShopping(): void {
-    this.router.navigate(['/profile']);
+    this.router.navigate(['/home']);
   }
 
   // Vaciar carrito
@@ -125,7 +155,7 @@ export class Carshop implements OnInit, OnDestroy {
       cancelButtonText: 'Cancelar'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.cartService.clearCart();
+        this.productService.limpiarCarrito();
         Swal.fire({
           icon: 'success',
           title: 'Carrito Vaciado',
@@ -149,7 +179,7 @@ export class Carshop implements OnInit, OnDestroy {
   }
 
   // TrackBy para optimizar el renderizado
-  trackByProductId(index: number, item: CartItem): number {
-    return item.id;
+  trackByProductId(index: number, item: ItemCarrito): number {
+    return item.producto.id;
   }
 }

@@ -1,35 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CartService } from '../../services/cart.service';
+import { ProductService } from '../../services/product.service';
+import { productosMock, Producto } from '../../../utils/productosMock';
 import Swal from 'sweetalert2';
-
-interface ProductImage {
-  url: string;
-  alt: string;
-}
-
-interface ProductData {
-  id: number;
-  name: string;
-  price: number;
-  description: string;
-  images: ProductImage[];
-  available: boolean;
-  category: string;
-  artisan: {
-    name: string;
-    bio: string;
-    experience: string;
-  };
-  story: string;
-  paymentMethods: string[];
-  shipping: {
-    time: string;
-    cost: string;
-    areas: string;
-  };
-}
 
 @Component({
   selector: 'app-product',
@@ -48,76 +22,50 @@ export class Product implements OnInit {
     payment: false
   };
 
-  // Producto actual (simulado, vendrá del backend/route params)
-  product: ProductData = {
-    id: 1,
-    name: 'Bolso Artesanal Tejido a Mano',
-    price: 45000,
-    description: 'Hermoso bolso artesanal tejido completamente a mano con técnicas tradicionales. Perfecto para uso diario, combina elegancia y funcionalidad. Hecho con fibras naturales sostenibles.',
-    images: [
-      {
-        url: 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=800&h=800&fit=crop',
-        alt: 'Bolso artesanal vista frontal'
-      },
-      {
-        url: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=800&h=800&fit=crop',
-        alt: 'Bolso artesanal vista lateral'
-      },
-      {
-        url: 'https://images.unsplash.com/photo-1564422170194-896b89110ef8?w=800&h=800&fit=crop',
-        alt: 'Bolso artesanal detalle del tejido'
-      },
-      {
-        url: 'https://images.unsplash.com/photo-1591561954557-26941169b49e?w=800&h=800&fit=crop',
-        alt: 'Bolso artesanal en uso'
-      }
-    ],
-    available: true,
-    category: 'Accesorios',
-    artisan: {
-      name: 'María González',
-      bio: 'Artesana con más de 15 años de experiencia en tejido tradicional colombiano. Especializada en técnicas ancestrales transmitidas de generación en generación.',
-      experience: 'Ha participado en ferias nacionales e internacionales, llevando el arte colombiano a diferentes países. Cada pieza es única y refleja la riqueza cultural de nuestra tierra.'
-    },
-    story: 'Este bolso nace de la inspiración en los paisajes cafeteros de Colombia. Cada puntada representa las montañas, los caminos y la calidez de nuestra gente. El proceso de creación toma aproximadamente 3 días de trabajo continuo, utilizando técnicas que han sido preservadas por siglos en las comunidades artesanales.',
-    paymentMethods: ['Efectivo', 'Transferencia bancaria', 'Nequi', 'Daviplata', 'Tarjeta de crédito'],
-    shipping: {
-      time: '3-5 días hábiles',
-      cost: 'Gratis en compras mayores a $80.000',
-      areas: 'Envíos a todo Colombia'
-    }
-  };
-
-  // Cantidad en el carrito
-  quantity: number = 1;
+  // Producto actual cargado desde el mock
+  producto: Producto | null = null;
+  cantidad: number = 1;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private cartService: CartService
+    private productService: ProductService
   ) {}
 
   ngOnInit(): void {
-    // Aquí obtendrías el ID del producto de los parámetros de la ruta
-    // y cargarías los datos desde el backend
-    this.route.params.subscribe(params => {
-      const productId = params['id'];
-      if (productId) {
-        // Cargar producto desde el servicio
-        // this.loadProduct(productId);
+    // Obtener el ID del producto desde la ruta
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      const productoId = parseInt(id, 10);
+      // Buscar el producto en el mock
+      this.producto = productosMock.find(p => p.id === productoId) || null;
+      
+      if (!this.producto) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Producto no encontrado',
+          text: 'El producto que buscas no existe',
+          confirmButtonColor: '#3C8D40'
+        }).then(() => {
+          this.router.navigate(['/home']);
+        });
       }
-    });
+    }
   }
 
   // Navegación del slider
   nextImage(): void {
-    this.currentImageIndex = (this.currentImageIndex + 1) % this.product.images.length;
+    if (this.producto && this.producto.imagenes) {
+      this.currentImageIndex = (this.currentImageIndex + 1) % this.producto.imagenes.length;
+    }
   }
 
   previousImage(): void {
-    this.currentImageIndex = this.currentImageIndex === 0 
-      ? this.product.images.length - 1 
-      : this.currentImageIndex - 1;
+    if (this.producto && this.producto.imagenes) {
+      this.currentImageIndex = this.currentImageIndex === 0 
+        ? this.producto.imagenes.length - 1 
+        : this.currentImageIndex - 1;
+    }
   }
 
   goToImage(index: number): void {
@@ -131,14 +79,16 @@ export class Product implements OnInit {
 
   // Compartir producto
   async shareProduct(): Promise<void> {
-    const productUrl = `${window.location.origin}/product/${this.product.id}`;
+    if (!this.producto) return;
+    
+    const productUrl = `${window.location.origin}/product/${this.producto.id}`;
     
     // Usar la API nativa de compartir si está disponible (móviles)
     if (navigator.share) {
       try {
         await navigator.share({
-          title: this.product.name,
-          text: this.product.description,
+          title: this.producto.nombre,
+          text: this.producto.descripcion,
           url: productUrl
         });
         
@@ -202,54 +152,48 @@ export class Product implements OnInit {
 
   // Agregar al carrito
   addToCart(): void {
-    if (!this.product.available) {
+    if (!this.producto || this.producto.stock === 0) {
       Swal.fire({
         icon: 'warning',
         title: 'Producto no disponible',
         text: 'Este producto no está disponible en este momento',
-        confirmButtonColor: '#a07034'
+        confirmButtonColor: '#3C8D40'
       });
       return;
     }
 
     // Agregar al carrito usando el servicio
-    this.cartService.addToCart({
-      id: this.product.id,
-      name: this.product.name,
-      price: this.product.price,
-      quantity: this.quantity,
-      image: this.product.images[0].url
-    });
+    this.productService.agregarAlCarrito(this.producto, this.cantidad);
 
     // Mostrar confirmación
     Swal.fire({
       icon: 'success',
       title: '¡Agregado al Carrito!',
       html: `
-        <p><strong>${this.product.name}</strong></p>
-        <p>Cantidad: ${this.quantity}</p>
-        <p>Total: ${this.formatPrice(this.product.price * this.quantity)}</p>
+        <p><strong>${this.producto.nombre}</strong></p>
+        <p>Cantidad: ${this.cantidad}</p>
+        <p>Total: ${this.formatPrice(this.producto.precio * this.cantidad)}</p>
       `,
       showCancelButton: true,
       confirmButtonText: 'Ir al carrito',
       cancelButtonText: 'Seguir comprando',
-      confirmButtonColor: '#a07034',
+      confirmButtonColor: '#3C8D40',
       cancelButtonColor: '#6c757d'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.router.navigate(['/cart']);
+        this.router.navigate(['/carshop']);
       }
     });
   }
 
   // Cambiar cantidad
   increaseQuantity(): void {
-    this.quantity++;
+    this.cantidad++;
   }
 
   decreaseQuantity(): void {
-    if (this.quantity > 1) {
-      this.quantity--;
+    if (this.cantidad > 1) {
+      this.cantidad--;
     }
   }
 
@@ -264,19 +208,22 @@ export class Product implements OnInit {
 
   // Volver a la página anterior
   goBack(): void {
-    this.router.navigate(['/profile']);
+    this.router.navigate(['/home']);
   }
 
   // Ir al perfil del artesano
   goToArtisanProfile(): void {
-    // this.router.navigate(['/profile', artisanId]);
-    this.router.navigate(['/profile']);
+    if (this.producto) {
+      this.router.navigate(['/userprofile', this.producto.artesano.id]);
+    }
   }
 
   // Contactar por WhatsApp
   contactWhatsApp(): void {
-    const message = encodeURIComponent(`Hola, estoy interesado en el producto: ${this.product.name}`);
-    const whatsappUrl = `https://wa.me/573001234567?text=${message}`;
-    window.open(whatsappUrl, '_blank');
+    if (this.producto) {
+      const message = encodeURIComponent(`Hola, estoy interesado en el producto: ${this.producto.nombre}`);
+      const whatsappUrl = `https://wa.me/573001234567?text=${message}`;
+      window.open(whatsappUrl, '_blank');
+    }
   }
 }
