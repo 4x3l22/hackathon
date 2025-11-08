@@ -71,7 +71,7 @@ export class Carshop implements OnInit, OnDestroy {
 
   // Volver atrás
   goBack(): void {
-    this.router.navigate(['/profile']);
+    this.router.navigate(['/home']);
   }
 
   // Proceder al pago

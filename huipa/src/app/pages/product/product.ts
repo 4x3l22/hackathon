@@ -264,7 +264,7 @@ export class Product implements OnInit {
 
   // Volver a la página anterior
   goBack(): void {
-    this.router.navigate(['/profile']);
+    this.router.navigate(['/home']);
   }
 
   // Ir al perfil del artesano

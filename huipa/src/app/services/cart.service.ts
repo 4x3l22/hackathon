@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, PLATFORM_ID, inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { BehaviorSubject, Observable } from 'rxjs';
 import Swal from 'sweetalert2';
 
@@ -15,6 +16,9 @@ export interface CartItem {
   providedIn: 'root'
 })
 export class CartService {
+  private platformId = inject(PLATFORM_ID);
+  private isBrowser: boolean;
+  
   private cartItems = new BehaviorSubject<CartItem[]>([]);
   private shippingCost = new BehaviorSubject<number>(5000); // Costo fijo de envío
 
@@ -23,8 +27,11 @@ export class CartService {
   shippingCost$ = this.shippingCost.asObservable();
 
   constructor() {
-    // Cargar carrito del localStorage al iniciar
-    this.loadCartFromStorage();
+    this.isBrowser = isPlatformBrowser(this.platformId);
+    // Cargar carrito del localStorage al iniciar (solo en el navegador)
+    if (this.isBrowser) {
+      this.loadCartFromStorage();
+    }
   }
 
   // Obtener items actuales del carrito
@@ -148,18 +155,22 @@ export class CartService {
 
   // Guardar carrito en localStorage
   private saveCartToStorage(): void {
-    localStorage.setItem('cart', JSON.stringify(this.cartItems.value));
+    if (this.isBrowser) {
+      localStorage.setItem('cart', JSON.stringify(this.cartItems.value));
+    }
   }
 
   // Cargar carrito desde localStorage
   private loadCartFromStorage(): void {
-    const savedCart = localStorage.getItem('cart');
-    if (savedCart) {
-      try {
-        const items = JSON.parse(savedCart);
-        this.cartItems.next(items);
-      } catch (error) {
-        console.error('Error al cargar el carrito:', error);
+    if (this.isBrowser) {
+      const savedCart = localStorage.getItem('cart');
+      if (savedCart) {
+        try {
+          const items = JSON.parse(savedCart);
+          this.cartItems.next(items);
+        } catch (error) {
+          console.error('Error al cargar el carrito:', error);
+        }
       }
     }
   }

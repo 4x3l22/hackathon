@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-userprofile',
@@ -78,7 +79,12 @@ export class Userprofile {
     }
   ];
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private location: Location) {}
+
+  // Volver a la página anterior
+  goBack(): void {
+    this.location.back();
+  }
 
   // Cambiar sección activa
   setActiveSection(section: 'story' | 'products' | 'info'): void {

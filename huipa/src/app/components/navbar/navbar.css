@@ -1,0 +1,62 @@
+/* Estilos del Navbar */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: white;
+}
+
+.nav-link {
+  position: relative;
+  padding: 8px 12px;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  min-width: 70px;
+}
+
+.nav-link:hover {
+  background-color: rgba(139, 90, 43, 0.05);
+  transform: translateY(-2px);
+}
+
+.nav-link svg {
+  transition: all 0.3s ease;
+}
+
+.nav-link:hover svg {
+  transform: scale(1.1);
+}
+
+/* Estado activo */
+.nav-link.active {
+  color: #8B5A2B !important;
+  background-color: rgba(139, 90, 43, 0.08);
+}
+
+.nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 3px;
+  background: linear-gradient(90deg, #8B5A2B, #D6A84E);
+  border-radius: 2px 2px 0 0;
+}
+
+.nav-link.active svg {
+  color: #8B5A2B;
+}
+
+.nav-link.active span {
+  font-weight: 600;
+  color: #8B5A2B;
+}
+
+/* Responsive */
+@media (min-width: 768px) {
+  .nav-link {
+    min-width: 90px;
+  }
+}
